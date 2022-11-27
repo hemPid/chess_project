@@ -21,3 +21,18 @@ class Board:
                      "p7": "g2",
                      "p8": "h2"
                      }}
+
+    def is_move_aviliable(move):
+        pass
+
+    def move(mv):
+        pass
+
+    def is_check(side):
+        pass
+
+    def is_castle_aviliable(side):
+        pass
+
+    def is_mate(side):
+        pass
