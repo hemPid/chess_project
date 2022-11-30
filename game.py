@@ -1,9 +1,11 @@
 import board
 import pygame
 
+
 class Game:
     """docstring for Game"""
-    def __init__(self, screen, tc_start, w_name='undefined', b_name='undefined', tc_type='n', tc_add=0):
+    def __init__(self, screen, tc_start, w_name='undefined',
+                 b_name='undefined', tc_type='n', tc_add=0):
         self.screen = screen
         self.white = w_name
         self.black = b_name
@@ -23,4 +25,7 @@ class Game:
                     color = self.white_color
                 else:
                     color = self.black_color
-                pygame.draw.rect(self.screen, color, (pos[0] + cell_size*j, pos[1] + cell_size*i, cell_size, cell_size))
+                pygame.draw.rect(self.screen, color,
+                                 (pos[0] + cell_size*j,
+                                  pos[1] + cell_size*i,
+                                  cell_size, cell_size))
