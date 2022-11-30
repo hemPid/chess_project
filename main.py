@@ -1,6 +1,12 @@
-import board
 import pygame
-import game
+import os.path
+import name_fill
+
+def get_name():
+    if os.path.isfile("db.txt"):
+        pass
+    else:
+        return False
 
 def main():
     FPS = 30
@@ -9,15 +15,29 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((screen_width, screen_height))
     clock = pygame.time.Clock()
+    stage = "initialization"
     finished = False
     screen.fill(0xffffff)
-    gm = game.Game(screen, 10)
+    name = get_name()
+    window = None
+    if name == False:
+        stage = "name_fill"
+        window = name_fill.name_fill_window(screen)
+    else:
+        stage = "game_type_choice"
     while not finished:
-        gm.draw_board((20, 20), 90)
         pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                finished = True
+        dt = clock.tick(FPS)
+        if stage == "name_fill":
+            window.loop()
+            events = pygame.event.get()
+            window.ev(events)
+            for event in events:
+                if event.type == pygame.QUIT:
+                    finished = True
+        else:
+            finished = True
+    pygame.quit()
 
 if __name__ == '__main__':
     main()
