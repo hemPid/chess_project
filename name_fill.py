@@ -6,7 +6,10 @@ class name_fill_window:
 	"""docstring for name_fill_window"""
 	def __init__(self, screen):
 		self.screen = screen
+		self.alert = False
 		self.f1 = pygame.font.SysFont('arial', 40, True)
+		self.f_alert = pygame.font.SysFont('arial', 20)
+		self.alert_obj = self.f_alert.render(str(''), True, 0xff0000)
 		self.text1 = self.f1.render(str('Enter your name (20 symb. max, eng. letters or _):'), True, 0x000000)
 		self.manager = pygame_textinput.TextInputManager(validator = self.valid)
 		self.t_imp = pygame_textinput.TextInputVisualizer(font_object=self.f1, manager=self.manager)
@@ -23,10 +26,16 @@ class name_fill_window:
 			else:
 				return False
 
+	def make_alert(self, text):
+		self.alert = True
+		self.alert_obj = self.f_alert.render(str(text), True, (255, 0, 0))
+
 	def loop(self):
 		self.screen.fill(0xffffff)
 		self.screen.blit(self.text1, (100, 100))
 		self.screen.blit(self.t_imp.surface, (100, 150))
+		if self.alert:
+			self.screen.blit(self.alert_obj, (100, 200))
 
 	def ev(self, events):
 		self.t_imp.update(events)
@@ -36,4 +45,4 @@ class name_fill_window:
 				if len(val) > 0:
 					print('great:', val)
 				else:
-					print('Nope')
+					self.make_alert('You need to enter something')
