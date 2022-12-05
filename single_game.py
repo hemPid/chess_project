@@ -16,14 +16,24 @@ class single_game_window:
         self.cell_size = 80
         self.bd = board.Board()
         self.current_move = 'w'
+        self.select_fields = []
+        time = int(data['tc'].split(' + ')[0])
+        print(time)
+        self.white_time = time*60*1000
+        self.black_time = time*60*1000
+        self.add = int(data['tc'].split(' + ')[1])
+        self.timer_font = pygame.font.SysFont('arial', 40, True)
 
     def loop(self, dt):
         self.screen.fill((255, 255, 255))
         self.draw_board((self.board_pos_x, self.board_pos_y), self.cell_size, self.current_move)
-        self.select_field('e4')
-        self.select_field('e5')
-        self.select_field('e2')
-        self.select_field('e7')
+        for f in self.select_fields:
+            self.select_field(f)
+        if self.current_move == 'w':
+            self.white_time -= dt
+        else:
+            self.black_time -= dt
+        self.draw_timer()
 
     def ev(self, events, dt):
         pass
@@ -82,3 +92,32 @@ class single_game_window:
         surf.set_alpha(90)
         pygame.draw.circle(surf, (0, 255, 0), (self.cell_size // 2, self.cell_size // 2), self.cell_size*0.2)
         self.screen.blit(surf, cell_pos)
+
+    def parse_time(self, time):
+        time_minutes = time // (60*1000)
+        time_seconds = (time % (60*1000)) // 1000
+        res = ''
+        if time_minutes < 10:
+            res += '0'
+        res += str(time_minutes) + ':'
+        if time_seconds < 10:
+            res += '0'
+        res += str(time_seconds)
+        return res
+
+    def draw_timer(self):
+        white_time_str = self.parse_time(self.white_time)
+        black_time_str = self.parse_time(self.black_time)
+        black_time_rendered_text = self.timer_font.render(black_time_str, True, (0,0,0))
+        white_time_rendered_text = self.timer_font.render(white_time_str, True, (0,0,0))
+        white_timer_coords = (0, 0)
+        black_timer_coords = (0, 0)
+        if self.current_move == 'w':
+            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y + self.cell_size*7)
+            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y)
+        else:
+            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y + self.cell_size*7)
+            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y)
+        self.screen.blit(white_time_rendered_text, white_timer_coords)
+        self.screen.blit(black_time_rendered_text, black_timer_coords)
+
