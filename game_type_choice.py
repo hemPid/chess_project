@@ -16,14 +16,20 @@ class game_type_choice_window:
         multiplayer_icon_text = "online game"
         self.single_rendered_text = self.icon_font.render(single_player_icon_text, True, (0, 0, 0))
         self.multiplayer_rendered_text = self.icon_font.render(multiplayer_icon_text, True, (0, 0, 0))
+        # initial drawing
         self.draw_initial_choice()
 
     def loop(self, dt):
-        pass
+        return dt
 
 
     def ev(self, events, dt):
-        pass
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for but in self.buttons:
+                    if but['rect'].collidepoint(event.pos):
+                        print(but['name'])
+                        
 
     def draw_initial_choice(self):
         self.screen.fill((255, 255, 255))
@@ -31,6 +37,8 @@ class game_type_choice_window:
         self.draw_header_text()
         # Drawing single player button
         self.draw_single_player_button()
+        # Drawing multiplayer button
+        self.draw_multiplayer_button()
 
     def draw_header_text(self):
         self.screen.blit(self.header_rendered, (20, 20))
@@ -47,5 +55,20 @@ class game_type_choice_window:
         icon_im = pygame.image.load('icons\\moni_icon.png').convert_alpha()
         icon_transformed = pygame.transform.scale(icon_im, (icon_size, icon_size))
         self.screen.blit(icon_transformed, (pos_x + (width // 2) - (icon_size // 2), pos_y + 10))
-        self.screen.blit(self.single_rendered_text, (pos_x + 80, pos_y + icon_size + 20))
+        self.screen.blit(self.single_rendered_text, (pos_x + 90, pos_y + height - 30))
+
+    def draw_multiplayer_button(self):
+        pos_x = 340
+        pos_y = 80
+        width = 300
+        height = 200
+        icon_size = 100
+        color = (243, 194, 105)
+        rect = pygame.draw.rect(self.screen, color, (pos_x, pos_y, width, height))
+        self.buttons.append({'name': 'multi', 'rect': rect})
+        icon_im = pygame.image.load('icons\\moni_icon.png').convert_alpha()
+        icon_transformed = pygame.transform.scale(icon_im, (icon_size, icon_size))
+        self.screen.blit(icon_transformed, (pos_x + (width - 2*icon_size)//2, pos_y + 10))
+        self.screen.blit(icon_transformed, (pos_x + (width - 2*icon_size)//2 + icon_size, pos_y + 10))
+        self.screen.blit(self.multiplayer_rendered_text, (pos_x + 100, pos_y + height - 30))
 

@@ -39,6 +39,8 @@ def main():
                 finished = True
         if window.finished:
             window = window.next_stage(screen)
+            if not name:
+                name = get_name()
     pygame.quit()
 
 
