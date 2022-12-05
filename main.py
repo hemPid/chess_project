@@ -6,7 +6,9 @@ import game_type_choice
 
 def get_name():
     if os.path.isfile("db.txt"):
-        pass
+        with open('db.txt', 'r') as f:
+            line = f.readlines()[0].split(': ')
+            return line[1]
     else:
         return False
 

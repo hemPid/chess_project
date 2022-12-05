@@ -36,6 +36,10 @@ class name_fill_window:
         self.alert = True
         self.alert_obj = self.f_alert.render(str(text), True, (255, 0, 0))
 
+    def create_db(self, name):
+        with open('db.txt', 'w') as f:
+            f.write('name: ' + name + '\n')
+
     def loop(self, dt):
         self.screen.fill(0xffffff)
         self.screen.blit(self.text1, (100, 100))
@@ -51,6 +55,7 @@ class name_fill_window:
                 if len(val) > 0:
                     # validation succesful
                     print('great:', val)
+                    self.create_db(val)
                     self.finished = True
                     self.next_stage = game_type_choice.game_type_choice_window
                 else:
