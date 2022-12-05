@@ -1,4 +1,5 @@
 import pygame
+import own_tc_choice
 
 
 class timecontrol_choice_window:
@@ -24,8 +25,8 @@ class timecontrol_choice_window:
                     if but['rect'].collidepoint(event.pos):
                         print(but['name'])
                         if but['name'] == 'own game':
-                            # self.finished = True
-                            pass
+                            self.finished = True
+                            self.next_stage = own_tc_choice.own_tc_choice_window
 
     def draw_buttons(self):
         button_width = 200
