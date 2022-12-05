@@ -4,8 +4,7 @@ import pygame
 
 class Game:
     """docstring for Game"""
-    def __init__(self, screen, tc_start, w_name='undefined',
-                 b_name='undefined', tc_type='n', tc_add=0):
+    def __init__(self, screen, data):
         self.screen = screen
         self.white = w_name
         self.black = b_name

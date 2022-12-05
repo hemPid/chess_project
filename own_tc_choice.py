@@ -1,6 +1,6 @@
 import pygame
 import pygame_textinput
-
+import oponents_name_input
 
 class own_tc_choice_window:
     """docstring for own_tc_choice_window"""
@@ -68,7 +68,9 @@ class own_tc_choice_window:
                     if (not len(time)*len(add)) or (time[0] == '0') or (add[0] == '0' and len(add) > 1):
                         self.invalid_format = True
                     else:
-                        print(time, ' + ', add)
+                        self.data['tc'] = time + ' + ' + add
+                        self.finished = True
+                        self.next_stage = oponents_name_input.oponents_name_window
 
     def valid(self, text):
         if not len(text):

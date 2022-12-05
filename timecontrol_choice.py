@@ -1,5 +1,6 @@
 import pygame
 import own_tc_choice
+import oponents_name_input
 
 
 class timecontrol_choice_window:
@@ -27,6 +28,10 @@ class timecontrol_choice_window:
                         if but['name'] == 'own game':
                             self.finished = True
                             self.next_stage = own_tc_choice.own_tc_choice_window
+                        else:
+                            self.data['tc'] = but['name']
+                            self.finished = True
+                            self.next_stage = oponents_name_input.oponents_name_window
 
     def draw_buttons(self):
         button_width = 200

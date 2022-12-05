@@ -1,21 +1,20 @@
 import pygame
 import pygame_textinput
-import game_type_choice
 
 
-class name_fill_window:
-    """docstring for name_fill_window"""
+class oponents_name_window:
+    """docstring for oponents_name_window"""
     def __init__(self, screen, data):
         self.screen = screen
         self.data = data
-        self.alert = False
+        self.next_stage = None
         self.finished = False
-        self.next_stage = ""
+        self.alert = False
         self.f1 = pygame.font.SysFont('arial', 40, True)
         self.f_alert = pygame.font.SysFont('arial', 20)
         self.alert_obj = self.f_alert.render(str(''), True, 0xff0000)
         self.text1 = self.f1.\
-            render(str('Enter your name (20 symb. max, eng. letters or _):'),
+            render(str('Enter your oponents name (20 symb. max, eng. letters or _):'),
                    True, 0x000000)
         self.manager = pygame_textinput.TextInputManager(validator=self.valid)
         self.t_imp = pygame_textinput.\
@@ -37,16 +36,12 @@ class name_fill_window:
         self.alert = True
         self.alert_obj = self.f_alert.render(str(text), True, (255, 0, 0))
 
-    def create_db(self, name):
-        with open('db.txt', 'w') as f:
-            f.write('name: ' + name + '\n')
-
     def loop(self, dt):
         self.screen.fill(0xffffff)
-        self.screen.blit(self.text1, (100, 100))
-        self.screen.blit(self.t_imp.surface, (100, 150))
+        self.screen.blit(self.text1, (50, 100))
+        self.screen.blit(self.t_imp.surface, (50, 150))
         if self.alert:
-            self.screen.blit(self.alert_obj, (100, 200))
+            self.screen.blit(self.alert_obj, (50, 200))
 
     def ev(self, events, dt):
         self.t_imp.update(events)
@@ -56,9 +51,7 @@ class name_fill_window:
                 if len(val) > 0:
                     # validation succesful
                     print('great:', val)
-                    self.create_db(val)
-                    self.data = {'name': val}
-                    self.finished = True
-                    self.next_stage = game_type_choice.game_type_choice_window
+                    self.data['op_name'] = val
+                    print(self.data)
                 else:
                     self.make_alert('You need to enter something')
