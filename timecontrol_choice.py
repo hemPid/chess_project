@@ -6,6 +6,7 @@ class timecontrol_choice_window:
     def __init__(self, screen, data):
         self.screen = screen
         self.data = data
+        self.next_stage = None
         self.finished = False
         self.buttons = []
         self.button_font = pygame.font.SysFont('arial', 40, True)
@@ -22,6 +23,9 @@ class timecontrol_choice_window:
                 for but in self.buttons:
                     if but['rect'].collidepoint(event.pos):
                         print(but['name'])
+                        if but['name'] == 'own game':
+                            # self.finished = True
+                            pass
 
     def draw_buttons(self):
         button_width = 200
@@ -33,17 +37,18 @@ class timecontrol_choice_window:
                  ['3 + 2', '5 + 0', '5 + 3'],
                  ['10 + 0', '10 + 5', '15 + 10'],
                  ['30 + 0', '30 + 20', 'own game']]
-        #drawing buttons
+        # drawing buttons
         for i in range(4):
             for j in range(3):
                 self.draw_button(pos_x + j*(button_width + sep),
-                            pos_y + i*(button_height + sep),
-                            button_width, button_height,
-                            modes[i][j])
+                                 pos_y + i*(button_height + sep),
+                                 button_width, button_height,
+                                 modes[i][j])
 
     def draw_button(self, pos_x, pos_y, width, height, text):
         color = (243, 194, 105)
-        rect = pygame.draw.rect(self.screen, color, (pos_x, pos_y, width, height))
+        rect = pygame.draw.rect(self.screen, color,
+                                (pos_x, pos_y, width, height))
         self.buttons.append({'name': text, 'rect': rect})
         rendered_text = self.button_font.render(text, True, (0, 0, 0))
         text_width = rendered_text.get_width()

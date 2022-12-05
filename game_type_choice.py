@@ -38,8 +38,8 @@ class game_type_choice_window:
                         if but['name'] == 'single':
                             self.finished = True
                             self.data['game_type'] = 'single'
-                            self.next_stage = timecontrol_choice.timecontrol_choice_window
-
+                            self.next_stage = timecontrol_choice.\
+                                timecontrol_choice_window
 
     def draw_initial_choice(self):
         self.screen.fill((255, 255, 255))
