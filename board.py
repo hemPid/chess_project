@@ -37,6 +37,8 @@ class Board:
                      "q": "d8",
                      "k": "e8"
                      }}
+        self.short_castle_aviliable = {'white': True, 'black': True}
+        self.long_castle_aviliable = {'white': True, 'black': True}
 
     def parse_cell_to_coords(self, pos):
         return (ord(pos[0]) - ord('a'), int(pos[1]) - 1)
@@ -54,17 +56,40 @@ class Board:
                     res = {'side': side, 'fig': fig}
         return res
 
+    def get_moves(self, side, fig):
+        field = self.figs[side][fig]
+        av_cells = self.get_aviliable_cells(side, fig)
+        res = []
+        for move in av_cells:
+            self.figs[side][fig] = move
+            if not self.is_check(side):
+                res.append(move)
+            self.figs[side][fig] = field
+        if fig[0] == 'k':
+            if side == 'white' and 'g1' in res and ('f1' not in res or self.is_check(side)):
+                res.remove('g1')
+            if side == 'white' and 'c1' in res and ('d1' not in res or self.is_check(side)):
+                res.remove('c1')
+            if side == 'black' and 'g8' in res and ('f8' not in res or self.is_check(side)):
+                res.remove('g8')
+            if side == 'black' and 'c8' in res and ('d8' not in res or self.is_check(side)):
+                res.remove('c8')
+        return res
 
-    def is_move_aviliable(self, move):
-        pass
 
-    def move(self, mv):
-        pass
 
     def is_check(self, side):
-        pass
+        king_field = self.figs[side]['k']
+        opposite_side = 'black'
+        if side == 'black':
+            opposite_side = 'white'
+        for fig in self.figs[opposite_side]:
+            if king_field in self.get_aviliable_cells(opposite_side, fig):
+                return True
+        return False
 
-    def is_castle_aviliable(self, side):
+
+    def is_castle_aviliable(self, side, type):
         pass
 
     def is_mate(self, side):
@@ -73,14 +98,26 @@ class Board:
     def get_aviliable_cells(self, side, fig):
         if fig[0] == 'p':
             # pawn
-            pass
+            return self.get_aviliable_cells_pawn(side, fig)
+        elif fig[0] == 'n':
+            return self.get_aviliable_cells_knight(side, fig)
+        elif fig[0] == 'b':
+            return self.get_aviliable_cells_bishop(side, fig)
+        elif fig[0] == 'r':
+            return self.get_aviliable_cells_rook(side, fig)
+        elif fig[0] == 'q':
+            return self.get_aviliable_cells_queen(side)
+        elif fig[0] == 'k':
+            return self.get_aviliable_cells_king(side)
+        else:
+            return None
 
     def get_aviliable_cells_pawn(self, side, fig):
         fig_pos = self.figs[side][fig]
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         possible_fields = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         start_position = 1
         if side == 'white':
             possible_coords = [(fig_coords[0] + 1, fig_coords[1] + 1),
@@ -93,18 +130,18 @@ class Board:
                                (fig_coords[0] - 1, fig_coords[1] - 1),
                                (fig_coords[0], fig_coords[1] - 1),
                                (fig_coords[0], fig_coords[1] - 2)]
-            oposite_side = 'white'
+            opposite_side = 'white'
             start_position = 6
         possible_fields = list(map(self.parse_coords_to_cell, possible_coords))
         # case 1
         if possible_fields[0]:
             fig1 = self.get_fields_fig(possible_fields[0])
-            if fig1 and fig1['side'] == oposite_side:
+            if fig1 and fig1['side'] == opposite_side:
                 res.append(possible_fields[0])
         # case 2
         if possible_fields[1]:
             fig2 = self.get_fields_fig(possible_fields[1])
-            if fig2 and fig2['side'] == oposite_side:
+            if fig2 and fig2['side'] == opposite_side:
                 res.append(possible_fields[1])
         # case 3
         if possible_fields[2]:
@@ -123,9 +160,9 @@ class Board:
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         possible_fields = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         if side == 'black':
-            oposite_side = 'white'
+            opposite_side = 'white'
         possible_coords = []
         possible_adds = (-2, -1, 1, 2)
         for add_x in possible_adds:
@@ -140,7 +177,7 @@ class Board:
         possible_fields = list(map(self.parse_coords_to_cell, possible_coords))
         for field in possible_fields:
             f = self.get_fields_fig(field)
-            if not f or f['side'] == oposite_side:
+            if not f or f['side'] == opposite_side:
                 res.append(field)
         return res
 
@@ -148,9 +185,9 @@ class Board:
         fig_pos = self.figs[side][fig]
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         if side == 'black':
-            oposite_side = 'white'
+            opposite_side = 'white'
         directions = [[True, True], [True, True]]
         k = 1
         while True in directions[0] or True in directions[1]:
@@ -171,7 +208,7 @@ class Board:
                             f = self.get_fields_fig(field)
                             if not f:
                                 res.append(field)
-                            elif f['side'] == oposite_side:
+                            elif f['side'] == opposite_side:
                                 res.append(field)
                                 directions[i][j] = False
                             else:
@@ -183,9 +220,9 @@ class Board:
         fig_pos = self.figs[side][fig]
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         if side == 'black':
-            oposite_side = 'white'
+            opposite_side = 'white'
         directions = [[True, True], [True, True]]
         k = 1
         while True in directions[0] or True in directions[1]:
@@ -209,7 +246,7 @@ class Board:
                             f = self.get_fields_fig(field)
                             if not f:
                                 res.append(field)
-                            elif f['side'] == oposite_side:
+                            elif f['side'] == opposite_side:
                                 res.append(field)
                                 directions[i][j] = False
                             else:
@@ -220,9 +257,9 @@ class Board:
         fig_pos = self.figs[side]['q']
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         if side == 'black':
-            oposite_side = 'white'
+            opposite_side = 'white'
         directions = [[True, True, True],
                       [True, False, True],
                       [True, True, True]]
@@ -246,7 +283,7 @@ class Board:
                             f = self.get_fields_fig(field)
                             if not f:
                                 res.append(field)
-                            elif f['side'] == oposite_side:
+                            elif f['side'] == opposite_side:
                                 res.append(field)
                                 directions[i][j] = False
                             else:
@@ -258,9 +295,9 @@ class Board:
         fig_pos = self.figs[side]['k']
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
-        oposite_side = 'black'
+        opposite_side = 'black'
         if side == 'black':
-            oposite_side = 'white'
+            opposite_side = 'white'
         adds = [-1, 0, 1]
         for i in range(3):
             for j in range(3):
@@ -276,7 +313,17 @@ class Board:
                 else:
                     field = self.parse_coords_to_cell(coords)
                     f = self.get_fields_fig(field)
-                    if not f or f['side'] == oposite_side:
+                    if not f or f['side'] == opposite_side:
                         res.append(field)
+        if self.short_castle_aviliable:
+            if side == 'white' and not self.get_fields_fig('f1') and not self.get_fields_fig('g1'):
+                res.append('g1')
+            if side == 'black' and not self.get_fields_fig('f8') and not self.get_fields_fig('g8'):
+                res.append('g8')
+        if self.long_castle_aviliable:
+            if side == 'white' and not self.get_fields_fig('b1') and not self.get_fields_fig('c1') and not self.get_fields_fig('d1'):
+                res.append('c1')
+            if side == 'black' and not self.get_fields_fig('b8') and not self.get_fields_fig('c8') and not self.get_fields_fig('d8'):
+                res.append('c8')
         return res
 
