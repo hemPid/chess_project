@@ -1,12 +1,15 @@
 import pygame
+import timecontrol_choice
 
 
 class game_type_choice_window:
     """docstring for game_type_choice_window"""
-    def __init__(self, screen):
+    def __init__(self, screen, data):
         self.screen = screen
+        self.data = data
         self.buttons = []
         self.finished = False
+        self.next_stage = None
         # rendering header
         self.header_font = pygame.font.SysFont('arial', 40, True)
         header_text = "Choose game type:"
@@ -32,6 +35,11 @@ class game_type_choice_window:
                 for but in self.buttons:
                     if but['rect'].collidepoint(event.pos):
                         print(but['name'])
+                        if but['name'] == 'single':
+                            self.finished = True
+                            self.data['game_type'] = 'single'
+                            self.next_stage = timecontrol_choice.timecontrol_choice_window
+
 
     def draw_initial_choice(self):
         self.screen.fill((255, 255, 255))
@@ -52,6 +60,8 @@ class game_type_choice_window:
         height = 200
         icon_size = 150
         color = (243, 194, 105)
+        text_width = self.single_rendered_text.get_width()
+        text_x = pos_x + (width - text_width) // 2
         rect = pygame.draw.\
             rect(self.screen, color, (pos_x, pos_y, width, height))
         self.buttons.append({'name': 'single', 'rect': rect})
@@ -62,7 +72,7 @@ class game_type_choice_window:
                          (pos_x + (width // 2) - (icon_size // 2),
                           pos_y + 10))
         self.screen.blit(self.single_rendered_text,
-                         (pos_x + 90, pos_y + height - 30))
+                         (text_x, pos_y + height - 30))
 
     def draw_multiplayer_button(self):
         pos_x = 340
@@ -71,6 +81,8 @@ class game_type_choice_window:
         height = 200
         icon_size = 100
         color = (243, 194, 105)
+        text_width = self.multiplayer_rendered_text.get_width()
+        text_x = pos_x + (width - text_width) // 2
         rect = pygame.draw.rect(self.screen, color,
                                 (pos_x, pos_y, width, height))
         self.buttons.append({'name': 'multi', 'rect': rect})
@@ -84,4 +96,4 @@ class game_type_choice_window:
                          (pos_x + (width - 2*icon_size)//2 + icon_size,
                           pos_y + 10))
         self.screen.blit(self.multiplayer_rendered_text,
-                         (pos_x + 100, pos_y + height - 30))
+                         (text_x, pos_y + height - 30))

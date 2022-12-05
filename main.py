@@ -7,7 +7,7 @@ import game_type_choice
 def get_name():
     if os.path.isfile("db.txt"):
         with open('db.txt', 'r') as f:
-            line = f.readlines()[0].split(': ')
+            line = f.readlines()[0].rstrip().split(': ')
             return line[1]
     else:
         return False
@@ -25,9 +25,9 @@ def main():
     name = get_name()
     window = None
     if not name:
-        window = name_fill.name_fill_window(screen)
+        window = name_fill.name_fill_window(screen, {})
     else:
-        window = game_type_choice.game_type_choice_window(screen)
+        window = game_type_choice.game_type_choice_window(screen, {'name': name})
     while not finished:
         pygame.display.update()
         dt = clock.tick(FPS)
@@ -38,7 +38,7 @@ def main():
             if event.type == pygame.QUIT:
                 finished = True
         if window.finished:
-            window = window.next_stage(screen)
+            window = window.next_stage(screen, window.data)
             if not name:
                 name = get_name()
     pygame.quit()

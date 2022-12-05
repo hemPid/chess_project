@@ -5,8 +5,9 @@ import game_type_choice
 
 class name_fill_window:
     """docstring for name_fill_window"""
-    def __init__(self, screen):
+    def __init__(self, screen, data):
         self.screen = screen
+        self.data = data
         self.alert = False
         self.finished = False
         self.next_stage = ""
@@ -56,6 +57,7 @@ class name_fill_window:
                     # validation succesful
                     print('great:', val)
                     self.create_db(val)
+                    self.data = {'name': name}
                     self.finished = True
                     self.next_stage = game_type_choice.game_type_choice_window
                 else:
