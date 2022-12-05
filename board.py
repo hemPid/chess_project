@@ -216,8 +216,8 @@ class Board:
                                 directions[i][j] = False
             k += 1
         return res
-    def get_aviliable_cells_queen(self, side, fig):
-        fig_pos = self.figs[side][fig]
+    def get_aviliable_cells_queen(self, side):
+        fig_pos = self.figs[side]['q']
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         oposite_side = 'black'
@@ -253,3 +253,30 @@ class Board:
                                 directions[i][j] = False
             k += 1
         return res
+
+    def get_aviliable_cells_king(self, side):
+        fig_pos = self.figs[side]['k']
+        fig_coords = self.parse_cell_to_coords(fig_pos)
+        res = []
+        oposite_side = 'black'
+        if side == 'black':
+            oposite_side = 'white'
+        adds = [-1, 0, 1]
+        for i in range(3):
+            for j in range(3):
+                if i == 1 and j == 1:
+                    continue
+                coords = (fig_coords[0] + adds[i],
+                          fig_coords[1] + adds[j])
+                if coords[0] < 0 or\
+                   coords[0] > 7 or\
+                   coords[1] < 0 or\
+                   coords[1] > 7:
+                    continue
+                else:
+                    field = self.parse_coords_to_cell(coords)
+                    f = self.get_fields_fig(field)
+                    if not f or f['side'] == oposite_side:
+                        res.append(field)
+        return res
+
