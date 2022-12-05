@@ -1,5 +1,6 @@
 import pygame
 import pygame_textinput
+import single_game
 
 
 class oponents_name_window:
@@ -52,6 +53,7 @@ class oponents_name_window:
                     # validation succesful
                     print('great:', val)
                     self.data['op_name'] = val
-                    print(self.data)
+                    self.finished = True
+                    self.next_stage = single_game.single_game_window
                 else:
                     self.make_alert('You need to enter something')
