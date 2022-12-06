@@ -70,21 +70,27 @@ class Board:
             f = self.get_fields_fig(move)
             self.figs[side][fig] = move
             if not self.is_check(side):
-                if not f or f['fig'] != 'k': 
+                if not f or f['fig'] != 'k':
                     res.append(move)
             self.figs[side][fig] = field
         if fig[0] == 'k':
-            if side == 'white' and 'g1' in res and ('f1' not in res or self.is_check(side)):
+            if side == 'white' and\
+               'g1' in res and\
+               ('f1' not in res or self.is_check(side)):
                 res.remove('g1')
-            if side == 'white' and 'c1' in res and ('d1' not in res or self.is_check(side)):
+            if side == 'white' and\
+               'c1' in res and\
+               ('d1' not in res or self.is_check(side)):
                 res.remove('c1')
-            if side == 'black' and 'g8' in res and ('f8' not in res or self.is_check(side)):
+            if side == 'black' and\
+               'g8' in res and\
+               ('f8' not in res or self.is_check(side)):
                 res.remove('g8')
-            if side == 'black' and 'c8' in res and ('d8' not in res or self.is_check(side)):
+            if side == 'black' and\
+               'c8' in res and\
+               ('d8' not in res or self.is_check(side)):
                 res.remove('c8')
         return res
-
-
 
     def is_check(self, side):
         king_field = self.figs[side]['k']
@@ -97,7 +103,7 @@ class Board:
         return False
 
     def is_mate(self, side):
-        if not is_check(side):
+        if not self.is_check(side):
             return False
         for fig in self.figs[side]:
             if not len(self.get_moves(side, fig)):
@@ -133,7 +139,6 @@ class Board:
                                (fig_coords[0] - 1, fig_coords[1] + 1),
                                (fig_coords[0], fig_coords[1] + 1),
                                (fig_coords[0], fig_coords[1] + 2)]
-             
         else:
             possible_coords = [(fig_coords[0] + 1, fig_coords[1] - 1),
                                (fig_coords[0] - 1, fig_coords[1] - 1),
@@ -182,7 +187,8 @@ class Board:
                    fig_coords[1] + add_y < 0 or\
                    fig_coords[1] + add_y > 7:
                     continue
-                possible_coords.append((fig_coords[0] + add_x, fig_coords[1] + add_y))
+                possible_coords.append((fig_coords[0] + add_x,
+                                        fig_coords[1] + add_y))
         possible_fields = list(map(self.parse_coords_to_cell, possible_coords))
         for field in possible_fields:
             f = self.get_fields_fig(field)
@@ -262,6 +268,7 @@ class Board:
                                 directions[i][j] = False
             k += 1
         return res
+
     def get_aviliable_cells_queen(self, side):
         fig_pos = self.figs[side]['q']
         fig_coords = self.parse_cell_to_coords(fig_pos)
@@ -274,7 +281,9 @@ class Board:
                       [True, True, True]]
         signs = [-1, 0, 1]
         k = 1
-        while True in directions[0] or True in directions[1] or True in directions[2]:
+        while True in directions[0] or\
+                True in directions[1] or\
+                True in directions[2]:
             for i in range(3):
                 for j in range(3):
                     if i == 1 and j == 1:
@@ -325,14 +334,23 @@ class Board:
                     if not f or f['side'] == opposite_side:
                         res.append(field)
         if self.short_castle_aviliable:
-            if side == 'white' and not self.get_fields_fig('f1') and not self.get_fields_fig('g1'):
+            if side == 'white' and\
+               not self.get_fields_fig('f1') and\
+               not self.get_fields_fig('g1'):
                 res.append('g1')
-            if side == 'black' and not self.get_fields_fig('f8') and not self.get_fields_fig('g8'):
+            if side == 'black' and\
+               not self.get_fields_fig('f8') and\
+               not self.get_fields_fig('g8'):
                 res.append('g8')
         if self.long_castle_aviliable:
-            if side == 'white' and not self.get_fields_fig('b1') and not self.get_fields_fig('c1') and not self.get_fields_fig('d1'):
+            if side == 'white' and\
+               not self.get_fields_fig('b1') and\
+               not self.get_fields_fig('c1') and\
+               not self.get_fields_fig('d1'):
                 res.append('c1')
-            if side == 'black' and not self.get_fields_fig('b8') and not self.get_fields_fig('c8') and not self.get_fields_fig('d8'):
+            if side == 'black' and\
+               not self.get_fields_fig('b8') and\
+               not self.get_fields_fig('c8') and\
+               not self.get_fields_fig('d8'):
                 res.append('c8')
         return res
-

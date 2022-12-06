@@ -50,8 +50,10 @@ class single_game_window:
                         if field in self.select_fields:
                             self.bd.move(self.current_move, self.selected_fig, field)
                             if self.current_move == 'white':
+                                self.white_time += self.add*1000
                                 self.current_move = 'black'
                             else:
+                                self.black_time += self.add*1000
                                 self.current_move = 'white'
                         self.select_fields = []
                         self.selected_fig = None
