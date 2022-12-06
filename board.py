@@ -60,6 +60,24 @@ class Board:
         f = self.get_fields_fig(field)
         if f:
             self.figs[f['side']][f['fig']] = '0'
+        if fig == 'k':
+            self.short_castle_aviliable[side] = False
+            self.long_castle_aviliable[side] = False
+            if side == 'white':
+                if field == 'g1':
+                    self.figs[side]['r2'] = 'f1'
+                if field == 'c1':
+                    self.figs[side]['r1'] = 'd1'
+            else:
+                if field == 'g8':
+                    self.figs[side]['r2'] = 'f8'
+                if field == 'c8':
+                    self.figs[side]['r1'] = 'd8'
+        if fig[0] == 'r':
+            if fig[1] == '1':
+                self.long_castle_aviliable[side] = False
+            else:
+                self.short_castle_aviliable[side] = False
         self.figs[side][fig] = field
 
     def get_moves(self, side, fig):
@@ -69,26 +87,34 @@ class Board:
         for move in av_cells:
             f = self.get_fields_fig(move)
             self.figs[side][fig] = move
+            if f:
+                self.figs[f['side']][f['fig']] = '0'
             if not self.is_check(side):
                 if not f or f['fig'] != 'k':
                     res.append(move)
             self.figs[side][fig] = field
+            if f:
+                self.figs[f['side']][f['fig']] = move
         if fig[0] == 'k':
             if side == 'white' and\
                'g1' in res and\
-               ('f1' not in res or self.is_check(side)):
+               ('f1' not in res or self.is_check(side) or\
+               not self.short_castle_aviliable[side]):
                 res.remove('g1')
             if side == 'white' and\
                'c1' in res and\
-               ('d1' not in res or self.is_check(side)):
+               ('d1' not in res or self.is_check(side) or\
+               not self.long_castle_aviliable[side]):
                 res.remove('c1')
             if side == 'black' and\
                'g8' in res and\
-               ('f8' not in res or self.is_check(side)):
+               ('f8' not in res or self.is_check(side) or\
+               not self.short_castle_aviliable[side]):
                 res.remove('g8')
             if side == 'black' and\
                'c8' in res and\
-               ('d8' not in res or self.is_check(side)):
+               ('d8' not in res or self.is_check(side) or\
+               not self.long_castle_aviliable[side]):
                 res.remove('c8')
         return res
 
@@ -129,6 +155,8 @@ class Board:
 
     def get_aviliable_cells_pawn(self, side, fig):
         fig_pos = self.figs[side][fig]
+        if fig_pos == '0':
+            return []
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         possible_fields = []
@@ -171,6 +199,8 @@ class Board:
 
     def get_aviliable_cells_knight(self, side, fig):
         fig_pos = self.figs[side][fig]
+        if fig_pos == '0':
+            return []
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         possible_fields = []
@@ -198,6 +228,8 @@ class Board:
 
     def get_aviliable_cells_bishop(self, side, fig):
         fig_pos = self.figs[side][fig]
+        if fig_pos == '0':
+            return []
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         opposite_side = 'black'
@@ -233,6 +265,8 @@ class Board:
 
     def get_aviliable_cells_rook(self, side, fig):
         fig_pos = self.figs[side][fig]
+        if fig_pos == '0':
+            return []
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         opposite_side = 'black'
@@ -271,6 +305,8 @@ class Board:
 
     def get_aviliable_cells_queen(self, side):
         fig_pos = self.figs[side]['q']
+        if fig_pos == '0':
+            return []
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []
         opposite_side = 'black'
