@@ -132,9 +132,29 @@ class Board:
         if not self.is_check(side):
             return False
         for fig in self.figs[side]:
-            if not len(self.get_moves(side, fig)):
+            if len(self.get_moves(side, fig)):
                 return False
         return True
+
+    def is_draw(self, side):
+        if not self.is_check(side):
+            flag = True
+            for fig in self.figs[side]:
+                if len(self.get_moves(side, fig)):
+                    flag = False
+            if flag:
+                return True
+            for sd in self.figs:
+                aviliable_figs = []
+                for fig in self.figs[sd]:
+                    if self.figs[sd][fig] != '0':
+                        aviliable_figs.append(fig[0])
+                if len(aviliable_figs) > 2:
+                    return False
+                if 'q' in aviliable_figs or 'r' in aviliable_figs or 'p' in aviliable_figs:
+                    return False
+            return True
+        return False
 
     def get_aviliable_cells(self, side, fig):
         if fig[0] == 'p':

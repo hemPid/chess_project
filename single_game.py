@@ -24,6 +24,7 @@ class single_game_window:
         self.black_time = time*60*1000
         self.add = int(data['tc'].split(' + ')[1])
         self.timer_font = pygame.font.SysFont('arial', 40, True)
+        self.game_over = False
 
     def loop(self, dt):
         self.screen.fill((255, 255, 255))
@@ -31,10 +32,11 @@ class single_game_window:
                         self.cell_size, self.current_move)
         for f in self.select_fields:
             self.select_field(f)
-        if self.current_move == 'white':
-            self.white_time -= dt
-        else:
-            self.black_time -= dt
+        if not self.game_over:
+            if self.current_move == 'white':
+                self.white_time -= dt
+            else:
+                self.black_time -= dt
         self.draw_timer()
 
     def ev(self, events, dt):
@@ -53,11 +55,25 @@ class single_game_window:
                             self.bd.move(self.current_move,
                                          self.selected_fig, field)
                             if self.current_move == 'white':
-                                self.white_time += self.add*1000
-                                self.current_move = 'black'
+                                if self.bd.is_mate('black'):
+                                    self.game_over = True
+                                    print('white won')
+                                elif self.bd.is_draw('black'):
+                                    self.game_over = True
+                                    print('draw')
+                                else:
+                                    self.white_time += self.add*1000
+                                    self.current_move = 'black'
                             else:
-                                self.black_time += self.add*1000
-                                self.current_move = 'white'
+                                if self.bd.is_mate('white'):
+                                    self.game_over = True
+                                    print('black won')
+                                elif self.bd.is_draw('white'):
+                                    self.game_over = True
+                                    print('draw')
+                                else:
+                                    self.black_time += self.add*1000
+                                    self.current_move = 'white'
                         self.select_fields = []
                         self.selected_fig = None
 
