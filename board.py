@@ -56,14 +56,22 @@ class Board:
                     res = {'side': side, 'fig': fig}
         return res
 
+    def move(self, side, fig, field):
+        f = self.get_fields_fig(field)
+        if f:
+            self.figs[f['side']][f['fig']] = '0'
+        self.figs[side][fig] = field
+
     def get_moves(self, side, fig):
         field = self.figs[side][fig]
         av_cells = self.get_aviliable_cells(side, fig)
         res = []
         for move in av_cells:
+            f = self.get_fields_fig(move)
             self.figs[side][fig] = move
             if not self.is_check(side):
-                res.append(move)
+                if not f or f['fig'] != 'k': 
+                    res.append(move)
             self.figs[side][fig] = field
         if fig[0] == 'k':
             if side == 'white' and 'g1' in res and ('f1' not in res or self.is_check(side)):
@@ -88,12 +96,13 @@ class Board:
                 return True
         return False
 
-
-    def is_castle_aviliable(self, side, type):
-        pass
-
     def is_mate(self, side):
-        pass
+        if not is_check(side):
+            return False
+        for fig in self.figs[side]:
+            if not len(self.get_moves(side, fig)):
+                return False
+        return True
 
     def get_aviliable_cells(self, side, fig):
         if fig[0] == 'p':
