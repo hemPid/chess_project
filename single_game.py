@@ -27,7 +27,8 @@ class single_game_window:
 
     def loop(self, dt):
         self.screen.fill((255, 255, 255))
-        self.draw_board((self.board_pos_x, self.board_pos_y), self.cell_size, self.current_move)
+        self.draw_board((self.board_pos_x, self.board_pos_y),
+                        self.cell_size, self.current_move)
         for f in self.select_fields:
             self.select_field(f)
         if self.current_move == 'white':
@@ -44,11 +45,13 @@ class single_game_window:
                     if not len(self.select_fields):
                         fig = self.bd.get_fields_fig(field)
                         if fig and fig['side'] == self.current_move:
-                            self.select_fields = self.bd.get_moves(self.current_move, fig['fig'])
+                            self.select_fields = self.bd.\
+                                get_moves(self.current_move, fig['fig'])
                             self.selected_fig = fig['fig']
                     else:
                         if field in self.select_fields:
-                            self.bd.move(self.current_move, self.selected_fig, field)
+                            self.bd.move(self.current_move,
+                                         self.selected_fig, field)
                             if self.current_move == 'white':
                                 self.white_time += self.add*1000
                                 self.current_move = 'black'
@@ -66,11 +69,15 @@ class single_game_window:
 
     def get_mouse_cell(self, event):
         if self.current_move == 'white':
-            coords = (((event.pos[0] - self.board_pos_x) // self.cell_size),
-                      ((self.board_pos_y + 8 * self.cell_size - event.pos[1]) // self.cell_size))
+            x = (event.pos[0] - self.board_pos_x) // self.cell_size
+            y = (self.board_pos_y + 8 * self.cell_size - event.pos[1])\
+                // self.cell_size
+            coords = (x, y)
         else:
-            coords = (((self.board_pos_x + 8 * self.cell_size - event.pos[0]) // self.cell_size),
-                      ((event.pos[1] - self.board_pos_y) // self.cell_size))
+            x = (self.board_pos_x + 8 * self.cell_size - event.pos[0])\
+                // self.cell_size
+            y = (event.pos[1] - self.board_pos_y) // self.cell_size
+            coords = (x, y)
         return self.bd.parse_coords_to_cell(coords)
 
     def draw_board(self, pos, cell_size, side='white'):
@@ -92,9 +99,9 @@ class single_game_window:
                 if self.bd.figs[sd][fig] == '0':
                     continue
                 fig_surf = pygame.\
-                           image.\
-                           load('models\\' + sd + '_' + fig[0] + '.png').\
-                           convert_alpha()
+                    image.\
+                    load('models\\' + sd + '_' + fig[0] + '.png').\
+                    convert_alpha()
                 fig_im = pygame.transform.scale(fig_surf,
                                                 (cell_size, cell_size))
                 fig_pos_x = 0
@@ -116,18 +123,26 @@ class single_game_window:
         coord_x = 0
         coord_y = 0
         if self.current_move == 'white':
-            coord_x = self.board_pos_x + self.cell_size*(ord(pos[0]) - ord('a'))
-            coord_y = self.board_pos_y + self.cell_size*(8 - int(pos[1]))
+            coord_x = self.board_pos_x +\
+                self.cell_size*(ord(pos[0]) - ord('a'))
+            coord_y = self.board_pos_y +\
+                self.cell_size*(8 - int(pos[1]))
         else:
-            coord_x = self.board_pos_x + self.cell_size*(ord('h') - ord(pos[0]))
-            coord_y = self.board_pos_y + self.cell_size*(int(pos[1]) - 1)
+            coord_x = self.board_pos_x +\
+                self.cell_size*(ord('h') - ord(pos[0]))
+            coord_y = self.board_pos_y +\
+                self.cell_size*(int(pos[1]) - 1)
         return (coord_x, coord_y)
 
     def select_field(self, field):
         cell_pos = self.get_field_coords(field)
         surf = pygame.Surface((self.cell_size, self.cell_size))
         surf.set_alpha(90)
-        pygame.draw.circle(surf, (0, 255, 0), (self.cell_size // 2, self.cell_size // 2), self.cell_size*0.2)
+        pygame.draw.circle(surf,
+                           (0, 255, 0),
+                           (self.cell_size // 2,
+                            self.cell_size // 2),
+                           self.cell_size*0.2)
         self.screen.blit(surf, cell_pos)
 
     def parse_time(self, time):
@@ -145,16 +160,21 @@ class single_game_window:
     def draw_timer(self):
         white_time_str = self.parse_time(self.white_time)
         black_time_str = self.parse_time(self.black_time)
-        black_time_rendered_text = self.timer_font.render(black_time_str, True, (0,0,0))
-        white_time_rendered_text = self.timer_font.render(white_time_str, True, (0,0,0))
+        black_time_rendered_text = self.timer_font.\
+            render(black_time_str, True, (0, 0, 0))
+        white_time_rendered_text = self.timer_font.\
+            render(white_time_str, True, (0, 0, 0))
         white_timer_coords = (0, 0)
         black_timer_coords = (0, 0)
         if self.current_move == 'white':
-            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y + self.cell_size*7)
-            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y)
+            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
+                                  self.board_pos_y + self.cell_size*7)
+            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
+                                  self.board_pos_y)
         else:
-            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y + self.cell_size*7)
-            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10, self.board_pos_y)
+            black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
+                                  self.board_pos_y + self.cell_size*7)
+            white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
+                                  self.board_pos_y)
         self.screen.blit(white_time_rendered_text, white_timer_coords)
         self.screen.blit(black_time_rendered_text, black_timer_coords)
-
