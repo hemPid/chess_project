@@ -1,5 +1,6 @@
 import pygame
 import board
+import game_type_choice
 
 
 class single_game_window:
@@ -112,6 +113,10 @@ class single_game_window:
                                     self.current_move = 'white'
                         self.select_fields = []
                         self.selected_fig = None
+                if self.game_over and self.quit_button.collidepoint(event.pos):
+                    self.data = {'name': self.data['name']}
+                    self.finished = True
+                    self.next_stage = game_type_choice.game_type_choice_window
                 for but in self.buttons:
                     if self.buttons[but].collidepoint(event.pos):
                         if but == 'resign':
