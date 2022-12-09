@@ -1,5 +1,6 @@
 import pygame
 import timecontrol_choice
+import multiplayer_choice
 
 
 class game_type_choice_window:
@@ -35,13 +36,15 @@ class game_type_choice_window:
                 for but in self.buttons:
                     if but['rect'].collidepoint(event.pos):
                         print(but['name'])
+                        self.finished = True
                         if but['name'] == 'single':
-                            self.finished = True
                             self.data['game_type'] = 'single'
                             self.next_stage = timecontrol_choice.\
                                 timecontrol_choice_window
                         else:
-                            pass
+                            self.data['game_type'] = 'multiplayer'
+                            self.next_stage = multiplayer_choice.\
+                                multiplayer_type_window
 
     def draw_initial_choice(self):
         self.screen.fill((255, 255, 255))
