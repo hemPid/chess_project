@@ -1,6 +1,7 @@
 import pygame
 import board
 import game_type_choice
+import json
 
 
 class single_game_window:
@@ -16,6 +17,11 @@ class single_game_window:
         self.board_pos_y = 50
         self.cell_size = 80
         self.bd = board.Board()
+        self.history = {
+            'type': 'single',
+            'moves': [],
+            'result': ''
+        }
         self.current_move = 'white'
         self.select_fields = []
         self.selected_fig = None
@@ -95,6 +101,9 @@ class single_game_window:
                         if field in self.select_fields:
                             self.bd.move(self.current_move,
                                          self.selected_fig, field)
+                            self.history['moves'].\
+                                append((self.selected_fig,
+                                       field))
                             if self.current_move == 'white':
                                 if self.bd.is_mate('black'):
                                     self.endgame('1-0')
@@ -147,6 +156,8 @@ class single_game_window:
         self.res = res
         self.game_over = True
         self.buttons = {}
+        self.history['result'] = res
+        self.write_res_to_db()
         if res == '1-0':
             print('white won')
             self.result_text = self.result_font.\
@@ -291,3 +302,8 @@ class single_game_window:
                                   self.board_pos_y)
         self.screen.blit(white_time_rendered_text, white_timer_coords)
         self.screen.blit(black_time_rendered_text, black_timer_coords)
+
+    def write_res_to_db(self):
+        with open('db.txt', 'a') as f:
+            json_string = json.dumps(self.history)
+            f.write(json_string + '\n')
