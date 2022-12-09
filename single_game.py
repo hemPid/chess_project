@@ -25,24 +25,56 @@ class single_game_window:
         self.add = int(data['tc'].split(' + ')[1])
         self.timer_font = pygame.font.SysFont('arial', 40, True)
         self.game_over = False
+        # drawing resign buttons
+        self.buttons_color = (150, 150, 150)
+        self.buttons_font = pygame.font.SysFont('arial', 50, True)
+        self.resign_button_text = self.buttons_font.\
+            render("Resign", True, (0, 0, 0))
+        self.draw_button_text = self.buttons_font.\
+            render("Draw", True, (0, 0, 0))
+        self.buttons = {
+            'resign': pygame.draw.rect(self.screen,
+                                       self.buttons_color, 
+                                       (self.board_pos_x + self.cell_size*8 + 20,
+                                        self.board_pos_y + self.cell_size*3 + 20,
+                                        300, 80)),
+            'draw': pygame.draw.rect(self.screen,
+                                     self.buttons_color,
+                                     (self.board_pos_x + self.cell_size*8 + 20,
+                                      self.board_pos_y + self.cell_size*3 + 120,
+                                      300, 80))
+        }
+        self.res = ""
+        # drawing quit buttons and result text
+        self.result_font = pygame.font.SysFont('arial', 40, True)
+        self.quit_button = pygame.draw.rect(self.screen,
+                                            self.buttons_color,
+                                            (self.board_pos_x + self.cell_size*8 + 20,
+                                             self.board_pos_y + self.cell_size*3 + 120,
+                                             300, 80))
+        self.quit_text = self.buttons_font.render('quit', True, (0, 0, 0))
 
     def loop(self, dt):
         self.screen.fill((255, 255, 255))
         self.draw_board((self.board_pos_x, self.board_pos_y),
                         self.cell_size, self.current_move)
-        for f in self.select_fields:
-            self.select_field(f)
         if not self.game_over:
+            for f in self.select_fields:
+                self.select_field(f)
+            self.draw_buttons()
             if self.current_move == 'white':
                 self.white_time -= dt
             else:
                 self.black_time -= dt
         self.draw_timer()
+        if self.game_over:
+            self.draw_quit_button()
+            self.draw_result_text()
 
     def ev(self, events, dt):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.is_mouse_on_board(event):
+                if self.is_mouse_on_board(event) and not self.game_over:
                     field = self.get_mouse_cell(event)
                     if not len(self.select_fields):
                         fig = self.bd.get_fields_fig(field)
@@ -56,26 +88,64 @@ class single_game_window:
                                          self.selected_fig, field)
                             if self.current_move == 'white':
                                 if self.bd.is_mate('black'):
-                                    self.game_over = True
-                                    print('white won')
+                                    self.endgame('1-0')
                                 elif self.bd.is_draw('black'):
-                                    self.game_over = True
-                                    print('draw')
+                                    self.endgame('0,5-0,5')
                                 else:
                                     self.white_time += self.add*1000
                                     self.current_move = 'black'
                             else:
                                 if self.bd.is_mate('white'):
-                                    self.game_over = True
-                                    print('black won')
+                                    self.endgame('0-1')
                                 elif self.bd.is_draw('white'):
-                                    self.game_over = True
-                                    print('draw')
+                                    self.endgame('0,5-0,5')
                                 else:
                                     self.black_time += self.add*1000
                                     self.current_move = 'white'
                         self.select_fields = []
                         self.selected_fig = None
+                for but in self.buttons:
+                    if self.buttons[but].collidepoint(event.pos):
+                        if but == 'resign':
+                            if self.current_move == 'white':
+                                self.endgame('0-1')
+                                break
+                            else:
+                                self.endgame('1-0')
+                                break
+                        else:
+                            self.endgame('0,5-0,5')
+                            break
+
+    def draw_result_text(self):
+        self.screen.blit(self.result_text,
+                         (self.board_pos_x + self.cell_size*8 + 20,
+                          self.board_pos_y + self.cell_size*3 + 40,
+                          300, 80))
+
+    def draw_quit_button(self):
+        pygame.draw.rect(self.screen, self.buttons_color, self.quit_button)
+        self.screen.blit(self.quit_text,
+                         (self.board_pos_x + self.cell_size*8 + 25,
+                          self.board_pos_y + self.cell_size*3 + 125,
+                          300, 80))
+
+    def endgame(self, res):
+        self.res = res
+        self.game_over = True
+        self.buttons = {}
+        if res == '1-0':
+            print('white won')
+            self.result_text = self.result_font.\
+                render('white wins', True, (0, 0, 0))
+        elif res == '0-1':
+            print('black won')
+            self.result_text = self.result_font.\
+                render('black wins', True, (0, 0, 0))
+        else:
+            print('draw')
+            self.result_text = self.result_font.\
+                render('draw', True, (0, 0, 0))
 
     def is_mouse_on_board(self, event):
         return (self.board_pos_x <= event.pos[0]) and\
@@ -95,6 +165,20 @@ class single_game_window:
             y = (event.pos[1] - self.board_pos_y) // self.cell_size
             coords = (x, y)
         return self.bd.parse_coords_to_cell(coords)
+
+    def draw_buttons(self):
+        pygame.draw.rect(self.screen,
+                         self.buttons_color,
+                         self.buttons['resign'])
+        pygame.draw.rect(self.screen,
+                         self.buttons_color,
+                         self.buttons['draw'])
+        self.screen.blit(self.resign_button_text,
+                         (self.board_pos_x + self.cell_size*8 + 25,
+                          self.board_pos_y + self.cell_size*3 + 25))
+        self.screen.blit(self.draw_button_text,
+                         (self.board_pos_x + self.cell_size*8 + 25,
+                          self.board_pos_y + self.cell_size*3 + 125))
 
     def draw_board(self, pos, cell_size, side='white'):
         # drawing cells
