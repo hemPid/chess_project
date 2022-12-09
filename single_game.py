@@ -35,24 +35,25 @@ class single_game_window:
             render("Draw", True, (0, 0, 0))
         self.buttons = {
             'resign': pygame.draw.rect(self.screen,
-                                       self.buttons_color, 
-                                       (self.board_pos_x + self.cell_size*8 + 20,
-                                        self.board_pos_y + self.cell_size*3 + 20,
+                                       self.buttons_color,
+                                       (self.board_pos_x+self.cell_size*8 + 20,
+                                        self.board_pos_y+self.cell_size*3 + 20,
                                         300, 80)),
             'draw': pygame.draw.rect(self.screen,
                                      self.buttons_color,
-                                     (self.board_pos_x + self.cell_size*8 + 20,
-                                      self.board_pos_y + self.cell_size*3 + 120,
+                                     (self.board_pos_x+self.cell_size*8 + 20,
+                                      self.board_pos_y+self.cell_size*3 + 120,
                                       300, 80))
         }
         self.res = ""
         # drawing quit buttons and result text
         self.result_font = pygame.font.SysFont('arial', 40, True)
-        self.quit_button = pygame.draw.rect(self.screen,
-                                            self.buttons_color,
-                                            (self.board_pos_x + self.cell_size*8 + 20,
-                                             self.board_pos_y + self.cell_size*3 + 120,
-                                             300, 80))
+        self.quit_button = pygame.draw.\
+            rect(self.screen,
+                 self.buttons_color,
+                 (self.board_pos_x + self.cell_size*8 + 20,
+                  self.board_pos_y + self.cell_size*3 + 120,
+                  300, 80))
         self.quit_text = self.buttons_font.render('quit', True, (0, 0, 0))
 
     def loop(self, dt):
@@ -78,7 +79,6 @@ class single_game_window:
             if self.game_over:
                 self.draw_quit_button()
                 self.draw_result_text()
-        
 
     def ev(self, events, dt):
         for event in events:
