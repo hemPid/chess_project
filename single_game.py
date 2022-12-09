@@ -58,18 +58,26 @@ class single_game_window:
         self.screen.fill((255, 255, 255))
         self.draw_board((self.board_pos_x, self.board_pos_y),
                         self.cell_size, self.current_move)
+        self.draw_timer()
         if not self.game_over:
             for f in self.select_fields:
                 self.select_field(f)
             self.draw_buttons()
             if self.current_move == 'white':
                 self.white_time -= dt
+                if self.white_time <= 0:
+                    self.white_time = 0
+                    self.endgame('0-1')
             else:
                 self.black_time -= dt
-        self.draw_timer()
-        if self.game_over:
-            self.draw_quit_button()
-            self.draw_result_text()
+                if self.black_time <= 0:
+                    self.black_time = 0
+                    self.endgame('1-0')
+        else:
+            if self.game_over:
+                self.draw_quit_button()
+                self.draw_result_text()
+        
 
     def ev(self, events, dt):
         for event in events:
