@@ -118,4 +118,5 @@ class connect_window:
                 self.data['chname'] = message.message['chname']
                 self.finished = True
                 self.next_stage = multiplayer_game.multiplayer_game_window
+                self.con.disconnect()
         print(message.message)

@@ -48,6 +48,7 @@ class waiting_room_window:
                     self.next_stage = game_type_choice.game_type_choice_window
             if event.type == pygame.QUIT:
                 self.remove()
+                self.con.disconnect()
 
     def introduce(self):
         self.con.write(self.data_to_send)
