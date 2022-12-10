@@ -1,6 +1,7 @@
 import pygame
 import own_tc_choice
 import oponents_name_input
+import loading_room
 
 
 class timecontrol_choice_window:
@@ -34,7 +35,7 @@ class timecontrol_choice_window:
                             if self.data['game_type'] == 'single':
                                 self.next_stage = oponents_name_input.oponents_name_window
                             else:
-                                pass
+                                self.next_stage = loading_room.waiting_room_window
 
     def draw_buttons(self):
         button_width = 200

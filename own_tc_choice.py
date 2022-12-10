@@ -1,6 +1,7 @@
 import pygame
 import pygame_textinput
 import oponents_name_input
+import loading_room
 
 class own_tc_choice_window:
     """docstring for own_tc_choice_window"""
@@ -73,7 +74,7 @@ class own_tc_choice_window:
                         if self.data['game_type'] == 'single':
                             self.next_stage = oponents_name_input.oponents_name_window
                         else:
-                            pass
+                            self.next_stage = loading_room.waiting_room_window
 
     def valid(self, text):
         if not len(text):
