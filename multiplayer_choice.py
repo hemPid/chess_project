@@ -1,4 +1,5 @@
 import pygame
+import timecontrol_choice
 
 class multiplayer_type_window:
     """docstring for multiplayer_type_window"""
@@ -19,7 +20,12 @@ class multiplayer_type_window:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for but in self.buttons:
                     if self.buttons[but].collidepoint(event.pos):
-                        print(but)
+                        self.finished = True
+                        if but == 'create':
+                            self.next_stage = timecontrol_choice.\
+                                timecontrol_choice_window
+                        else:
+                            pass
 
     def draw_buttons(self):
         buttons_color = (243, 194, 105)

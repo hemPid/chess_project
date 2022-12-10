@@ -70,7 +70,10 @@ class own_tc_choice_window:
                     else:
                         self.data['tc'] = time + ' + ' + add
                         self.finished = True
-                        self.next_stage = oponents_name_input.oponents_name_window
+                        if self.data['game_type'] == 'single':
+                            self.next_stage = oponents_name_input.oponents_name_window
+                        else:
+                            pass
 
     def valid(self, text):
         if not len(text):

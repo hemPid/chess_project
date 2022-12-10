@@ -31,7 +31,10 @@ class timecontrol_choice_window:
                         else:
                             self.data['tc'] = but['name']
                             self.finished = True
-                            self.next_stage = oponents_name_input.oponents_name_window
+                            if self.data['game_type'] == 'single':
+                                self.next_stage = oponents_name_input.oponents_name_window
+                            else:
+                                pass
 
     def draw_buttons(self):
         button_width = 200

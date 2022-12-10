@@ -2,7 +2,7 @@ import pygame
 import os.path
 import name_fill
 import game_type_choice
-
+import os
 
 def get_name():
     if os.path.isfile("db.txt"):
@@ -42,6 +42,7 @@ def main():
             if not name:
                 name = get_name()
     pygame.quit()
+    os._exit(0)
 
 
 if __name__ == '__main__':
