@@ -1,6 +1,9 @@
 import pygame
 import game_type_choice
 import connection
+import multiplayer_game
+import random
+
 
 class waiting_room_window:
     """docstring for witing_room_window"""
@@ -52,7 +55,37 @@ class waiting_room_window:
     def remove(self):
         self.con.write({'msg_type': 'remove', 'name': self.data['name']})
 
+    def start_game(self, op_name):
+        side = random.randint(0,1)
+        op_side = ''
+        if side:
+            self.data['white'] = self.data['name']
+            self.data['black'] = op_name
+            self.data['side'] = 'white'
+            op_side = 'black'
+        else:
+            self.data['white'] = op_name
+            self.data['black'] = self.data['name']
+            self.data['side'] = 'black'
+            op_side = 'white'
+        self.data['chname'] = self.data['name'] + '_' + op_name
+        self.con.write({'msg_type': 'confirmation',
+                        'to': op_name,
+                        'chname': self.data['chname'],
+                        'side': op_side,
+                        'name': self.data['name'],
+                        'tc': self.data['tc']})
+        self.con.disconnect()
+        self.finished = True
+        self.next_stage = multiplayer_game.multiplayer_game_window
+
     def msg_listener(self, message):
         print(message.message)
+        if self.finished:
+            return 0
         if message.message['msg_type'] == 'request':
             self.introduce()
+        elif message.message['msg_type'] == 'connect' and\
+             message.message['to'] == self.data['name']:
+            self.start_game(message.message['name'])
+

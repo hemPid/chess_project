@@ -1,11 +1,15 @@
 import pygame
 import connection
+import game_type_choice
+import multiplayer_game
+
 
 class connect_window:
     def __init__(self, screen, data):
         self.screen = screen
         self.data = data
         self.finished = False
+        self.waiting_for_response = False
         self.next_stage = None
         self.screen.fill((255, 255, 255))
         self.aviliable_rooms = {}
@@ -31,7 +35,15 @@ class connect_window:
         self.screen.blit(self. quit_text, (1002, 51))
 
     def ev(self, events, dt):
-        pass
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.waiting_for_response:
+                if self.quit_but.collidepoint(event.pos):
+                    self.con.disconnect()
+                    self.finished = True
+                    self.next_stage = game_type_choice.game_type_choice_window
+                for name in self.aviliable_rooms:
+                    if self.aviliable_rooms[name]['button'].collidepoint(event.pos):
+                        self.ask_permisson(name)
 
     def draw_list(self):
         i = 0
@@ -70,6 +82,12 @@ class connect_window:
     def request(self):
         self.con.write({'msg_type': 'request'})
 
+    def ask_permisson(self, name):
+        self.con.write({'msg_type': 'connect', 
+                        'name': self.data['name'],
+                        'to': name})
+        self.waiting_for_response = True
+
     def msg_listener(self, message):
         if message.message['msg_type'] == 'introduction':
             tc = message.message['tc']
@@ -87,5 +105,17 @@ class connect_window:
             }
         elif message.message['msg_type'] == 'remove':
             self.aviliable_rooms.pop(message.message['name'])
+        elif message.message['msg_type'] == 'confirmation':
+            if message.message['to'] == self.data['name']:
+                self.data['tc'] = message.message['tc']
+                self.data['side'] = message.message['side']
+                if self.data['side'] == 'white':
+                    self.data['white'] = self.data['name']
+                    self.data['black'] = message.message['name']
+                else:
+                    self.data['white'] = message.message['name']
+                    self.data['black'] = self.data['name']
+                self.data['chname'] = message.message['chname']
+                self.finished = True
+                self.next_stage = multiplayer_game.multiplayer_game_window
         print(message.message)
-        print(self.aviliable_rooms)
