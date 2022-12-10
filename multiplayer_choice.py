@@ -1,5 +1,6 @@
 import pygame
 import timecontrol_choice
+import connect_room
 
 class multiplayer_type_window:
     """docstring for multiplayer_type_window"""
@@ -25,7 +26,7 @@ class multiplayer_type_window:
                             self.next_stage = timecontrol_choice.\
                                 timecontrol_choice_window
                         else:
-                            pass
+                            self.next_stage = connect_room.connect_window
 
     def draw_buttons(self):
         buttons_color = (243, 194, 105)
