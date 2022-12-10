@@ -66,7 +66,7 @@ class single_game_window:
         self.screen.fill((255, 255, 255))
         self.draw_board((self.board_pos_x, self.board_pos_y),
                         self.cell_size, self.current_move)
-        self.draw_timer()
+        self.draw_timer(self.current_move)
         if not self.game_over:
             for f in self.select_fields:
                 self.select_field(f)
@@ -157,7 +157,7 @@ class single_game_window:
         self.game_over = True
         self.buttons = {}
         self.history['result'] = res
-        self.write_res_to_db()
+        #self.write_res_to_db()
         if res == '1-0':
             print('white won')
             self.result_text = self.result_font.\
@@ -281,7 +281,7 @@ class single_game_window:
         res += str(time_seconds)
         return res
 
-    def draw_timer(self):
+    def draw_timer(self, side):
         white_time_str = self.parse_time(self.white_time)
         black_time_str = self.parse_time(self.black_time)
         black_time_rendered_text = self.timer_font.\
@@ -290,7 +290,7 @@ class single_game_window:
             render(white_time_str, True, (0, 0, 0))
         white_timer_coords = (0, 0)
         black_timer_coords = (0, 0)
-        if self.current_move == 'white':
+        if side == 'white':
             white_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
                                   self.board_pos_y + self.cell_size*7)
             black_timer_coords = (self.board_pos_x + self.cell_size*8 + 10,
