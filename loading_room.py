@@ -38,6 +38,7 @@ class waiting_room_window:
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.quit_but.collidepoint(event.pos):
+                    self.remove()
                     self.con.disconnect()
                     self.finished = True
                     self.data = {'name': self.data['name']}
@@ -46,5 +47,10 @@ class waiting_room_window:
     def introduce(self):
         self.con.write(self.data_to_send)
 
+    def remove(self):
+        self.con.write({'msg_type': 'remove', 'name': self.data['name']})
+
     def msg_listener(self, message):
         print(message.message)
+        if message.message['msg_type'] == 'request':
+            self.introduce()
