@@ -1,6 +1,14 @@
 class Board:
-    """docstring for Board"""
+    """
+    Класс шахматной доски.
+    Хранит положения всех фигур и методы определения
+    возможных ходов.
+    """
     def __init__(self):
+        """
+        init
+        """
+        # данные о фигурах
         self.figs = {"white": {
                      "p1": "a2",
                      "p2": "b2",
@@ -37,18 +45,39 @@ class Board:
                      "q": "d8",
                      "k": "e8"
                      }}
+        # данные о рокировках
         self.short_castle_aviliable = {'white': True, 'black': True}
         self.long_castle_aviliable = {'white': True, 'black': True}
 
     def parse_cell_to_coords(self, pos):
+        """
+        Возвращает координаты поля
+        Args:
+        pos - поле в шахматном формате
+        """
         return (ord(pos[0]) - ord('a'), int(pos[1]) - 1)
 
     def parse_coords_to_cell(self, coords):
+        """
+        Возвращает имя поля
+        Args:
+        coords - поле в координатном формате
+        """
         if coords[0] < 0 or coords[0] > 7 or coords[1] < 0 or coords[1] > 7:
             return False
         return chr(coords[0] + ord('a')) + str(coords[1] + 1)
 
     def get_fields_fig(self, field):
+        """
+        возвращает фигуру, назодящуюся в поле
+        Если фигуры нет, возвращает False
+        Args:
+        field - поле
+        Returns:
+        {'side': side, 'fig': fig}
+        side - цвет фигуры
+        fig - имя фигуры
+        """
         res = False
         for side in self.figs:
             for fig in self.figs[side]:
@@ -57,10 +86,19 @@ class Board:
         return res
 
     def move(self, side, fig, field):
+        """
+        Делает ход.
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        field - поле хода
+        """
         f = self.get_fields_fig(field)
         if f:
+            # ест фигуру
             self.figs[f['side']][f['fig']] = '0'
         if fig == 'k':
+            # рокировка
             self.short_castle_aviliable[side] = False
             self.long_castle_aviliable[side] = False
             if side == 'white':
@@ -73,6 +111,7 @@ class Board:
                     self.figs[side]['r2'] = 'f8'
                 if field == 'c8':
                     self.figs[side]['r1'] = 'd8'
+        # отмена рокировки
         if fig[0] == 'r':
             if fig[1] == '1':
                 self.long_castle_aviliable[side] = False
@@ -81,10 +120,17 @@ class Board:
         self.figs[side][fig] = field
 
     def get_moves(self, side, fig):
+        """
+        Возвращает список возможных ходов фигуры (с учётом шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         field = self.figs[side][fig]
         av_cells = self.get_aviliable_cells(side, fig)
         res = []
         for move in av_cells:
+            # проверка на связку фигуры или шах королю
             f = self.get_fields_fig(move)
             self.figs[side][fig] = move
             if f:
@@ -95,6 +141,7 @@ class Board:
             self.figs[side][fig] = field
             if f:
                 self.figs[f['side']][f['fig']] = move
+        # проверка возможности рокировки
         if fig[0] == 'k':
             if side == 'white' and\
                'g1' in res and\
@@ -119,6 +166,11 @@ class Board:
         return res
 
     def is_check(self, side):
+        """
+        Проверка шаха на доске
+        Args:
+        side - сторона, для которой проверяется шах
+        """
         king_field = self.figs[side]['k']
         opposite_side = 'black'
         if side == 'black':
@@ -129,6 +181,11 @@ class Board:
         return False
 
     def is_mate(self, side):
+        """
+        Проверка мата на доске
+        Args:
+        side - сторона, для которой проверяется мат
+        """
         if not self.is_check(side):
             return False
         for fig in self.figs[side]:
@@ -137,12 +194,18 @@ class Board:
         return True
 
     def is_draw(self, side):
+        """
+        Проверка ничьи на доске
+        Args:
+        side - сторона, для которой проверяется ничья
+        """
         if not self.is_check(side):
             flag = True
             for fig in self.figs[side]:
                 if len(self.get_moves(side, fig)):
                     flag = False
             if flag:
+                # фигурам некуда ходить
                 return True
             for sd in self.figs:
                 aviliable_figs = []
@@ -155,10 +218,17 @@ class Board:
                    'r' in aviliable_figs or\
                    'p' in aviliable_figs:
                     return False
+            # осталось недостаточное число фигур для мата
             return True
         return False
 
     def get_aviliable_cells(self, side, fig):
+        """
+        Возвращает список возможных ходов фигуры (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         if fig[0] == 'p':
             # pawn
             return self.get_aviliable_cells_pawn(side, fig)
@@ -176,6 +246,12 @@ class Board:
             return None
 
     def get_aviliable_cells_pawn(self, side, fig):
+        """
+        Возвращает список возможных ходов пешки (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side][fig]
         if fig_pos == '0':
             return []
@@ -220,6 +296,12 @@ class Board:
         return res
 
     def get_aviliable_cells_knight(self, side, fig):
+        """
+        Возвращает список возможных ходов коня (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side][fig]
         if fig_pos == '0':
             return []
@@ -249,6 +331,12 @@ class Board:
         return res
 
     def get_aviliable_cells_bishop(self, side, fig):
+        """
+        Возвращает список возможных ходов слона (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side][fig]
         if fig_pos == '0':
             return []
@@ -286,6 +374,12 @@ class Board:
         return res
 
     def get_aviliable_cells_rook(self, side, fig):
+        """
+        Возвращает список возможных ходов ладьи (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side][fig]
         if fig_pos == '0':
             return []
@@ -326,6 +420,12 @@ class Board:
         return res
 
     def get_aviliable_cells_queen(self, side):
+        """
+        Возвращает список возможных ходов ферзя (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side]['q']
         if fig_pos == '0':
             return []
@@ -368,6 +468,12 @@ class Board:
         return res
 
     def get_aviliable_cells_king(self, side):
+        """
+        Возвращает список возможных ходов короля (без учёта шахов)
+        Args:
+        side - цвет фигуры
+        fig - фигура
+        """
         fig_pos = self.figs[side]['k']
         fig_coords = self.parse_cell_to_coords(fig_pos)
         res = []

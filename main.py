@@ -6,6 +6,10 @@ import os
 
 
 def get_name():
+    """
+    Функция получает имя из базы данных,
+    если база данных не инициализирована, возвращает False
+    """
     if os.path.isfile("db.txt"):
         with open('db.txt', 'r') as f:
             line = f.readlines()[0].rstrip().split(': ')
@@ -15,6 +19,10 @@ def get_name():
 
 
 def main():
+    """
+    Главная функция. Содержит главный цикл,
+    вызывающий все окна в программе
+    """
     FPS = 30
     screen_width = 1200
     screen_height = 800

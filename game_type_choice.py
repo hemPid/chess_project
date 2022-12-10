@@ -4,8 +4,18 @@ import multiplayer_choice
 
 
 class game_type_choice_window:
-    """docstring for game_type_choice_window"""
+    """
+    Окно выбора режима игры
+    """
     def __init__(self, screen, data):
+        """
+        init
+        Args:
+        screen - экран для рисования
+        data - данные, переданные предыдущим окном
+        Возможные поля data:
+        name - имя пользователя
+        """
         self.screen = screen
         self.data = data
         self.buttons = []
@@ -28,25 +38,41 @@ class game_type_choice_window:
         self.draw_initial_choice()
 
     def loop(self, dt):
+        """
+        Главный цикл окна
+        Args:
+        dt - параметр pygame.time.Clock
+        """
         return dt
 
     def ev(self, events, dt):
+        """
+        Обработчик событий окнаArgs:
+        events - список событий
+        dt - параметр pygame.time.Clock
+        """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for but in self.buttons:
                     if but['rect'].collidepoint(event.pos):
-                        print(but['name'])
+                        # режим игры выбран
                         self.finished = True
                         if but['name'] == 'single':
+                            # Переключение на выбор контроля времени
+                            # для одиночной игры
                             self.data['game_type'] = 'single'
                             self.next_stage = timecontrol_choice.\
                                 timecontrol_choice_window
                         else:
+                            # Переключение на выбор режима онлай игры
                             self.data['game_type'] = 'multiplayer'
                             self.next_stage = multiplayer_choice.\
                                 multiplayer_type_window
 
     def draw_initial_choice(self):
+        """
+        Рисует все кнопки и текст
+        """
         self.screen.fill((255, 255, 255))
         # Drawing text
         self.draw_header_text()
@@ -56,9 +82,15 @@ class game_type_choice_window:
         self.draw_multiplayer_button()
 
     def draw_header_text(self):
+        """
+        Рисует текст загаловка
+        """
         self.screen.blit(self.header_rendered, (20, 20))
 
     def draw_single_player_button(self):
+        """
+        Рисует кнопку выбора одиночной игры
+        """
         pos_x = 20
         pos_y = 80
         width = 300
@@ -80,6 +112,9 @@ class game_type_choice_window:
                          (text_x, pos_y + height - 30))
 
     def draw_multiplayer_button(self):
+        """
+        Рисует кнопку выбора онлайн игры
+        """
         pos_x = 340
         pos_y = 80
         width = 300

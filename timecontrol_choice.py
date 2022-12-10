@@ -5,8 +5,19 @@ import loading_room
 
 
 class timecontrol_choice_window:
-    """docstring for timecontrol_choice_window"""
+    """
+    Класс окна выбора контроля времени
+    """
     def __init__(self, screen, data):
+        """
+        init
+        Args:
+        screen - экран для рисования
+        data - данные, переданные предыдущим окном
+        Возможные поля data:
+        name - имя пользователя
+        game_type - тип игры
+        """
         self.screen = screen
         self.data = data
         self.next_stage = None
@@ -18,15 +29,27 @@ class timecontrol_choice_window:
         self.draw_buttons()
 
     def loop(self, dt):
+        """
+        Главный цикл окна
+        Args:
+        dt - параметр pygame.time.Clock
+        """
         pass
 
     def ev(self, events, dt):
+        """
+        Обработчик событий окна
+        Args:
+        events - список событий
+        dt - параметр pygame.time.Clock
+        """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for but in self.buttons:
                     if but['rect'].collidepoint(event.pos):
                         print(but['name'])
                         if but['name'] == 'own game':
+                            # запуск ввода собственного контроля времени
                             self.finished = True
                             self.next_stage = own_tc_choice.\
                                 own_tc_choice_window
@@ -34,13 +57,18 @@ class timecontrol_choice_window:
                             self.data['tc'] = but['name']
                             self.finished = True
                             if self.data['game_type'] == 'single':
+                                # запуск одиночной игры
                                 self.next_stage = oponents_name_input.\
                                     oponents_name_window
                             else:
+                                # запуск онлайн игры
                                 self.next_stage = loading_room.\
                                     waiting_room_window
 
     def draw_buttons(self):
+        """
+        Рисует кнопки выбора контроля времени
+        """
         button_width = 200
         button_height = 100
         pos_x = 50
@@ -59,6 +87,15 @@ class timecontrol_choice_window:
                                  modes[i][j])
 
     def draw_button(self, pos_x, pos_y, width, height, text):
+        """
+        Рисует кнопку
+        Args:
+        pos_x - положение кнопки по оси Ox
+        pos_y - положение кнопки по оси Oy
+        width - ширина кнопки
+        height - высота кнопки
+        text - текст кнопки
+        """
         color = (243, 194, 105)
         rect = pygame.draw.rect(self.screen, color,
                                 (pos_x, pos_y, width, height))
