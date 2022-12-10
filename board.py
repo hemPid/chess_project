@@ -98,23 +98,23 @@ class Board:
         if fig[0] == 'k':
             if side == 'white' and\
                'g1' in res and\
-               ('f1' not in res or self.is_check(side) or\
-               not self.short_castle_aviliable[side]):
+               ('f1' not in res or self.is_check(side) or
+                    not self.short_castle_aviliable[side]):
                 res.remove('g1')
             if side == 'white' and\
                'c1' in res and\
-               ('d1' not in res or self.is_check(side) or\
-               not self.long_castle_aviliable[side]):
+               ('d1' not in res or self.is_check(side) or
+                    not self.long_castle_aviliable[side]):
                 res.remove('c1')
             if side == 'black' and\
                'g8' in res and\
-               ('f8' not in res or self.is_check(side) or\
-               not self.short_castle_aviliable[side]):
+               ('f8' not in res or self.is_check(side) or
+                    not self.short_castle_aviliable[side]):
                 res.remove('g8')
             if side == 'black' and\
                'c8' in res and\
-               ('d8' not in res or self.is_check(side) or\
-               not self.long_castle_aviliable[side]):
+               ('d8' not in res or self.is_check(side) or
+                    not self.long_castle_aviliable[side]):
                 res.remove('c8')
         return res
 
@@ -151,7 +151,9 @@ class Board:
                         aviliable_figs.append(fig[0])
                 if len(aviliable_figs) > 2:
                     return False
-                if 'q' in aviliable_figs or 'r' in aviliable_figs or 'p' in aviliable_figs:
+                if 'q' in aviliable_figs or\
+                   'r' in aviliable_figs or\
+                   'p' in aviliable_figs:
                     return False
             return True
         return False

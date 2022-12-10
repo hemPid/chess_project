@@ -15,7 +15,8 @@ class oponents_name_window:
         self.f_alert = pygame.font.SysFont('arial', 20)
         self.alert_obj = self.f_alert.render(str(''), True, 0xff0000)
         self.text1 = self.f1.\
-            render(str('Enter your oponents name (20 symb. max, eng. letters or _):'),
+            render(str('Enter your oponents name'
+                   ' (20 symb. max, eng. letters or _):'),
                    True, 0x000000)
         self.manager = pygame_textinput.TextInputManager(validator=self.valid)
         self.t_imp = pygame_textinput.\

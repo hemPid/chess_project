@@ -4,6 +4,7 @@ import name_fill
 import game_type_choice
 import os
 
+
 def get_name():
     if os.path.isfile("db.txt"):
         with open('db.txt', 'r') as f:
@@ -22,12 +23,13 @@ def main():
     clock = pygame.time.Clock()
     finished = False
     screen.fill(0xffffff)
-    name = False #get_name()
+    name = False  # get_name()
     window = None
     if not name:
         window = name_fill.name_fill_window(screen, {})
     else:
-        window = game_type_choice.game_type_choice_window(screen, {'name': name})
+        window = game_type_choice.\
+            game_type_choice_window(screen, {'name': name})
     while not finished:
         pygame.display.update()
         dt = clock.tick(FPS)
@@ -39,8 +41,8 @@ def main():
                 finished = True
         if window.finished:
             window = window.next_stage(screen, window.data)
-            #if not name:
-                #name = get_name()
+            # if not name:
+            # name = get_name()
     pygame.quit()
     os._exit(0)
 

@@ -3,6 +3,7 @@ import pygame
 import connection
 import game_type_choice
 
+
 class multiplayer_game_window(single_game.single_game_window):
     """docstring for multiplayer_game_window"""
     def __init__(self, screen, data):

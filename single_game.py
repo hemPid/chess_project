@@ -157,7 +157,7 @@ class single_game_window:
         self.game_over = True
         self.buttons = {}
         self.history['result'] = res
-        #self.write_res_to_db()
+        # self.write_res_to_db()
         if res == '1-0':
             print('white won')
             self.result_text = self.result_font.\

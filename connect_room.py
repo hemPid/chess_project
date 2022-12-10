@@ -14,14 +14,17 @@ class connect_window:
         self.screen.fill((255, 255, 255))
         self.aviliable_rooms = {}
         self.buttons_color = (243, 194, 105)
-        self.con = connection.Connection('waiting_room', self.data['name'], self.msg_listener, self.request)
+        self.con = connection.Connection('waiting_room',
+                                         self.data['name'],
+                                         self.msg_listener,
+                                         self.request)
         self.con.connect()
         self.font = pygame.font.SysFont('arial', 30, True)
         self.list_item_height = 50
         self.list_pos = (100, 50)
         self.button_text = self.font.render('play', True, (0, 0, 0))
         self.empty_text = self.font.render('No games found', True, (0, 0, 0))
-        self.quit_text = self.font.render('quit', True, (0,0,0))
+        self.quit_text = self.font.render('quit', True, (0, 0, 0))
         self.quit_but = pygame.draw.\
             rect(self.screen, self.buttons_color,
                  (1000, 50,
@@ -36,13 +39,15 @@ class connect_window:
 
     def ev(self, events, dt):
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN and not self.waiting_for_response:
+            if event.type == pygame.MOUSEBUTTONDOWN and\
+               not self.waiting_for_response:
                 if self.quit_but.collidepoint(event.pos):
                     self.con.disconnect()
                     self.finished = True
                     self.next_stage = game_type_choice.game_type_choice_window
                 for name in self.aviliable_rooms:
-                    if self.aviliable_rooms[name]['button'].collidepoint(event.pos):
+                    if self.aviliable_rooms[name]['button'].\
+                       collidepoint(event.pos):
                         self.ask_permisson(name)
 
     def draw_list(self):
@@ -52,38 +57,40 @@ class connect_window:
             self.screen.\
                 blit(data['rendered_name'],
                      (self.list_pos[0],
-                      self.list_pos[1] +\
-                      i*self.list_item_height +\
-                      (self.list_item_height - data['rendered_name'].get_height()) / 2))
+                      self.list_pos[1] +
+                      i*self.list_item_height +
+                      (self.list_item_height -
+                       data['rendered_name'].get_height()) / 2))
             self.screen.\
                 blit(data['rendered_tc'],
                      (self.list_pos[0] + 450,
-                      self.list_pos[1] +\
-                      i*self.list_item_height +\
-                      (self.list_item_height - data['rendered_name'].get_height()) / 2))
+                      self.list_pos[1] +
+                      i*self.list_item_height +
+                      (self.list_item_height -
+                       data['rendered_name'].get_height()) / 2))
             pygame.draw.rect(self.screen, self.buttons_color, data['button'])
             self.screen.\
                 blit(self.button_text,
                      (self.list_pos[0] + 702,
-                      self.list_pos[1] +\
-                      i*self.list_item_height +\
-                      (self.list_item_height - self.button_text.get_height()) / 2))
+                      self.list_pos[1] +
+                      i*self.list_item_height +
+                      (self.list_item_height -
+                       self.button_text.get_height()) / 2))
             i += 1
         if not len(self.aviliable_rooms):
             self.screen.blit(self.empty_text, self.list_pos)
 
-
-
     def get_button_coords(self):
         return (self.list_pos[0] + 700,
-                self.list_pos[1] + len(self.aviliable_rooms)*self.list_item_height + 2,
+                self.list_pos[1] + len(self.aviliable_rooms) *
+                self.list_item_height + 2,
                 self.button_text.get_width() + 4, self.list_item_height - 4)
 
     def request(self):
         self.con.write({'msg_type': 'request'})
 
     def ask_permisson(self, name):
-        self.con.write({'msg_type': 'connect', 
+        self.con.write({'msg_type': 'connect',
                         'name': self.data['name'],
                         'to': name})
         self.waiting_for_response = True
@@ -94,9 +101,9 @@ class connect_window:
             button = pygame.draw.rect(self.screen, self.buttons_color,
                                       self.get_button_coords())
             rendered_name = self.font.\
-                render(message.message['name'], True, (0,0,0))
+                render(message.message['name'], True, (0, 0, 0))
             rendered_tc = self.font.\
-                render(message.message['tc'], True, (0,0,0))
+                render(message.message['tc'], True, (0, 0, 0))
             self.aviliable_rooms[message.message['name']] = {
                 'tc': tc,
                 'button': button,

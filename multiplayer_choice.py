@@ -2,6 +2,7 @@ import pygame
 import timecontrol_choice
 import connect_room
 
+
 class multiplayer_type_window:
     """docstring for multiplayer_type_window"""
     def __init__(self, screen, data):
@@ -11,7 +12,6 @@ class multiplayer_type_window:
         self.next_stage = None
         self.screen.fill((255, 255, 255))
         self.draw_buttons()
-
 
     def loop(self, dt):
         pass

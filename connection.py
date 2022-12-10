@@ -2,6 +2,7 @@ import pubnub.pnconfiguration as pconf
 import pubnub.pubnub as pb
 import pubnub.callbacks as pcalls
 
+
 class Connection:
     """docstring for Connection"""
     def __init__(self, channel, name, msg_event, conn_event):
@@ -9,10 +10,12 @@ class Connection:
         self.msg_event = msg_event
         self.conn_event = conn_event
         self.config = pconf.PNConfiguration()
-        self.config.subscribe_key = "sub-c-d23026ff-4f53-4301-8078-f382b3af9fa1"
-        self.config.publish_key = "pub-c-b69bc4ea-dffe-4a06-8302-1ed1c7aac999"
+        self.config.\
+            subscribe_key = "sub-c-d23026ff-4f53-4301-8078-f382b3af9fa1"
+        self.config.\
+            publish_key = "pub-c-b69bc4ea-dffe-4a06-8302-1ed1c7aac999"
         self.config.user_id = name
-        #self.config.subscribe_request_timeout = 1
+        # self.config.subscribe_request_timeout = 1
         self.pubnub = pb.PubNub(self.config)
 
     def write(self, message):

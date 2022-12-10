@@ -29,7 +29,10 @@ class waiting_room_window:
                   self.but_text_rend.get_height() + 10))
         self.screen.blit(self.but_text_rend, (105, 205))
         # forming connection
-        self.con = connection.Connection('waiting_room', self.data['name'], self.msg_listener, self.introduce)
+        self.con = connection.Connection('waiting_room',
+                                         self.data['name'],
+                                         self.msg_listener,
+                                         self.introduce)
         self.con.connect()
         self.data_to_send = self.data.copy()
         self.data_to_send['msg_type'] = 'introduction'
@@ -57,7 +60,7 @@ class waiting_room_window:
         self.con.write({'msg_type': 'remove', 'name': self.data['name']})
 
     def start_game(self, op_name):
-        side = random.randint(0,1)
+        side = random.randint(0, 1)
         op_side = ''
         if side:
             self.data['white'] = self.data['name']
@@ -87,6 +90,5 @@ class waiting_room_window:
         if message.message['msg_type'] == 'request':
             self.introduce()
         elif message.message['msg_type'] == 'connect' and\
-             message.message['to'] == self.data['name']:
+                message.message['to'] == self.data['name']:
             self.start_game(message.message['name'])
-
