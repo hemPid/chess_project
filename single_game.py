@@ -5,8 +5,21 @@ import json
 
 
 class single_game_window:
-    """docstring for single_game_window"""
+    """
+    окно одиночной игры
+    """
     def __init__(self, screen, data):
+        """
+        init
+        Args:
+        screen - экран для рисования
+        data - данные, переданные предыдущим окном
+        Возможные поля data:
+        name - имя пользователя
+        game_type - тип игры
+        tc - контроль времени
+        op_name - имя оппонента
+        """
         self.screen = screen
         self.data = data
         self.finished = False
@@ -16,6 +29,7 @@ class single_game_window:
         self.board_pos_x = 50
         self.board_pos_y = 50
         self.cell_size = 80
+        # инициализация доски
         self.bd = board.Board()
         self.history = {
             'type': 'single',
@@ -63,14 +77,23 @@ class single_game_window:
         self.quit_text = self.buttons_font.render('quit', True, (0, 0, 0))
 
     def loop(self, dt):
+        """
+        Главный цикл окна
+        Args:
+        dt - параметр pygame.time.Clock
+        """
+        # рисование доски и таймера
         self.screen.fill((255, 255, 255))
         self.draw_board((self.board_pos_x, self.board_pos_y),
                         self.cell_size, self.current_move)
         self.draw_timer(self.current_move)
         if not self.game_over:
+            # выделение возможных полей
             for f in self.select_fields:
                 self.select_field(f)
+            # рисование кнопок
             self.draw_buttons()
+            # уменьшение времени на таймере
             if self.current_move == 'white':
                 self.white_time -= dt
                 if self.white_time <= 0:
@@ -83,15 +106,24 @@ class single_game_window:
                     self.endgame('1-0')
         else:
             if self.game_over:
+                # отображение результата и кнопки выхода
                 self.draw_quit_button()
                 self.draw_result_text()
 
     def ev(self, events, dt):
+        """
+        Обработчик событий окна
+        Args:
+        events - список событий
+        dt - параметр pygame.time.Clock
+        """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.is_mouse_on_board(event) and not self.game_over:
+                    # клик по полю
                     field = self.get_mouse_cell(event)
                     if not len(self.select_fields):
+                        # выделение возможных полей
                         fig = self.bd.get_fields_fig(field)
                         if fig and fig['side'] == self.current_move:
                             self.select_fields = self.bd.\
@@ -99,6 +131,7 @@ class single_game_window:
                             self.selected_fig = fig['fig']
                     else:
                         if field in self.select_fields:
+                            # ход и запись хода
                             self.bd.move(self.current_move,
                                          self.selected_fig, field)
                             self.history['moves'].\
@@ -106,29 +139,38 @@ class single_game_window:
                                        field))
                             if self.current_move == 'white':
                                 if self.bd.is_mate('black'):
+                                    # победа белых
                                     self.endgame('1-0')
                                 elif self.bd.is_draw('black'):
+                                    # ничья
                                     self.endgame('0,5-0,5')
                                 else:
+                                    # продолжение игры
                                     self.white_time += self.add*1000
                                     self.current_move = 'black'
                             else:
                                 if self.bd.is_mate('white'):
+                                    # победа чёрных
                                     self.endgame('0-1')
                                 elif self.bd.is_draw('white'):
+                                    # ничья
                                     self.endgame('0,5-0,5')
                                 else:
+                                    # продолжение игры
                                     self.black_time += self.add*1000
                                     self.current_move = 'white'
+                        # снятие выделения с полей
                         self.select_fields = []
                         self.selected_fig = None
                 if self.game_over and self.quit_button.collidepoint(event.pos):
+                    # выход в главное меню
                     self.data = {'name': self.data['name']}
                     self.finished = True
                     self.next_stage = game_type_choice.game_type_choice_window
                 for but in self.buttons:
                     if self.buttons[but].collidepoint(event.pos):
                         if but == 'resign':
+                            # сдача
                             if self.current_move == 'white':
                                 self.endgame('0-1')
                                 break
@@ -136,16 +178,23 @@ class single_game_window:
                                 self.endgame('1-0')
                                 break
                         else:
+                            # ничья
                             self.endgame('0,5-0,5')
                             break
 
     def draw_result_text(self):
+        """
+        отображает результат партии
+        """
         self.screen.blit(self.result_text,
                          (self.board_pos_x + self.cell_size*8 + 20,
                           self.board_pos_y + self.cell_size*3 + 40,
                           300, 80))
 
     def draw_quit_button(self):
+        """
+        рисует кнопку выхода
+        """
         pygame.draw.rect(self.screen, self.buttons_color, self.quit_button)
         self.screen.blit(self.quit_text,
                          (self.board_pos_x + self.cell_size*8 + 25,
@@ -153,6 +202,11 @@ class single_game_window:
                           300, 80))
 
     def endgame(self, res):
+        """
+        завершает игру
+        Args:
+        res - результат партии
+        """
         self.res = res
         self.game_over = True
         self.buttons = {}
@@ -172,12 +226,24 @@ class single_game_window:
                 render('draw', True, (0, 0, 0))
 
     def is_mouse_on_board(self, event):
+        """
+        возвращает True, если мышь находится в пределах доски
+        Args:
+        event - событие мыши
+        """
         return (self.board_pos_x <= event.pos[0]) and\
                (event.pos[0] <= self.board_pos_x + 8 * self.cell_size) and\
                (self.board_pos_y <= event.pos[1]) and\
                (event.pos[1] <= self.board_pos_y + 8 * self.cell_size)
 
     def get_mouse_cell(self, event):
+        """
+        Возвращает поле, на котором находится мышь
+        Args:
+        event - событие мыши
+        Returns
+        string cell - поле
+        """
         if self.current_move == 'white':
             x = (event.pos[0] - self.board_pos_x) // self.cell_size
             y = (self.board_pos_y + 8 * self.cell_size - event.pos[1])\
@@ -191,6 +257,9 @@ class single_game_window:
         return self.bd.parse_coords_to_cell(coords)
 
     def draw_buttons(self):
+        """
+        рисует кнопки сдачи и ничьи
+        """
         pygame.draw.rect(self.screen,
                          self.buttons_color,
                          self.buttons['resign'])
@@ -205,6 +274,13 @@ class single_game_window:
                           self.board_pos_y + self.cell_size*3 + 125))
 
     def draw_board(self, pos, cell_size, side='white'):
+        """
+        рисует доску
+        Args:
+        pos - позиция левого верхнего угла доски
+        cell_size - размер клетки
+        side - сторона, отображаемая снизу
+        """
         # drawing cells
         for i in range(8):
             for j in range(8):
