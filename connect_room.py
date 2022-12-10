@@ -16,10 +16,19 @@ class connect_window:
         self.list_item_height = 50
         self.list_pos = (100, 50)
         self.button_text = self.font.render('play', True, (0, 0, 0))
+        self.empty_text = self.font.render('No games found', True, (0, 0, 0))
+        self.quit_text = self.font.render('quit', True, (0,0,0))
+        self.quit_but = pygame.draw.\
+            rect(self.screen, self.buttons_color,
+                 (1000, 50,
+                  self.quit_text.get_width() + 4,
+                  self.quit_text.get_height() + 2))
 
     def loop(self, dt):
         self.screen.fill((255, 255, 255))
         self.draw_list()
+        pygame.draw.rect(self.screen, self.buttons_color, self.quit_but)
+        self.screen.blit(self. quit_text, (1002, 51))
 
     def ev(self, events, dt):
         pass
@@ -36,23 +45,25 @@ class connect_window:
                       (self.list_item_height - data['rendered_name'].get_height()) / 2))
             self.screen.\
                 blit(data['rendered_tc'],
-                     (self.list_pos[0] + 150,
+                     (self.list_pos[0] + 450,
                       self.list_pos[1] +\
                       i*self.list_item_height +\
                       (self.list_item_height - data['rendered_name'].get_height()) / 2))
             pygame.draw.rect(self.screen, self.buttons_color, data['button'])
             self.screen.\
                 blit(self.button_text,
-                     (self.list_pos[0] + 402,
+                     (self.list_pos[0] + 702,
                       self.list_pos[1] +\
                       i*self.list_item_height +\
                       (self.list_item_height - self.button_text.get_height()) / 2))
             i += 1
+        if not len(self.aviliable_rooms):
+            self.screen.blit(self.empty_text, self.list_pos)
 
 
 
     def get_button_coords(self):
-        return (self.list_pos[0] + 400,
+        return (self.list_pos[0] + 700,
                 self.list_pos[1] + len(self.aviliable_rooms)*self.list_item_height + 2,
                 self.button_text.get_width() + 4, self.list_item_height - 4)
 
