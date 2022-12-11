@@ -31,7 +31,7 @@ def main():
     clock = pygame.time.Clock()
     finished = False
     screen.fill(0xffffff)
-    name = False  # get_name()
+    name = get_name()
     window = None
     if not name:
         window = name_fill.name_fill_window(screen, {})
@@ -49,8 +49,8 @@ def main():
                 finished = True
         if window.finished:
             window = window.next_stage(screen, window.data)
-            # if not name:
-            # name = get_name()
+            if not name:
+                name = get_name()
     pygame.quit()
     os._exit(0)
 
