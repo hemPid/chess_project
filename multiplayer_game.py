@@ -5,11 +5,25 @@ import game_type_choice
 
 
 class multiplayer_game_window(single_game.single_game_window):
-    """docstring for multiplayer_game_window"""
+    """
+    Класс окна онлайн партии
+    """
     def __init__(self, screen, data):
+        """
+        init
+        Args:
+        screen - экран для рисования
+        data - данные, переданные предыдущим окном
+        Возможные поля data:
+        name - имя пользователя
+        game_type - тип игры
+        tc - контроль времени
+        white - имя белых
+        black -имя чёрных
+        side - сторона, за которую играет пользователь
+        """
         super(multiplayer_game_window, self).__init__(screen, data)
-        print('!!!')
-        print(data)
+        # создание соединения для общения между игроками
         self.con = connection.Connection(self.data['chname'],
                                          self.data['name'],
                                          self.message_event,
@@ -22,6 +36,13 @@ class multiplayer_game_window(single_game.single_game_window):
             self.op_side = 'white'
 
     def send_move(self, fig, field, time):
+        """
+        отправляет информацию о зоде оппоненту
+        Args:
+        fig - имя фигуры
+        field - поле, куда ходит фигура
+        time - время на часах, во время хода
+        """
         self.con.write({
             'type': 'move',
             'fig': fig,
@@ -31,20 +52,34 @@ class multiplayer_game_window(single_game.single_game_window):
             })
 
     def send_result(self, res):
+        """
+        отправляет результат в случае поражения по времени
+        или сдачи
+        Args:
+        res - результат
+        """
         self.con.write({
             'type': 'result',
             'res': res
             })
 
     def loop(self, dt):
+        """
+        Главный цикл окна
+        Args:
+        dt - параметр pygame.time.Clock
+        """
         self.screen.fill((255, 255, 255))
+        # рисование доски и таймера
         self.draw_board((self.board_pos_x, self.board_pos_y),
                         self.cell_size, self.side)
         self.draw_timer(self.side)
         if not self.game_over:
+            # выделение полей
             for f in self.select_fields:
                 self.select_field(f)
             self.draw_buttons()
+            # проверка поражения по времени
             if self.current_move == 'white':
                 self.white_time -= dt
                 if self.white_time <= 0:
@@ -60,13 +95,21 @@ class multiplayer_game_window(single_game.single_game_window):
                         self.endgame('1-0')
                         self.send_result('1-0')
         else:
+            # отображение результата и кнопки выхода
             if self.game_over:
                 self.draw_quit_button()
                 self.draw_result_text()
 
     def ev(self, events, dt):
+        """
+        Обработчик событий окна
+        Args:
+        events - список событий
+        dt - параметр pygame.time.Clock
+        """
         for event in events:
             if event.type == pygame.QUIT:
+                # разрыв соединения
                 self.con.write({'msg_type': 'disconnect'})
                 self.con.disconnect()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -75,6 +118,7 @@ class multiplayer_game_window(single_game.single_game_window):
                    self.current_move == self.side:
                     field = self.get_mouse_cell(event)
                     if not len(self.select_fields):
+                        # выделение возможных полей для хода
                         fig = self.bd.get_fields_fig(field)
                         if fig and fig['side'] == self.current_move:
                             self.select_fields = self.bd.\
@@ -82,6 +126,7 @@ class multiplayer_game_window(single_game.single_game_window):
                             self.selected_fig = fig['fig']
                     else:
                         if field in self.select_fields:
+                            # ход и его отправка
                             self.bd.move(self.current_move,
                                          self.selected_fig, field)
                             self.history['moves'].\
@@ -112,11 +157,13 @@ class multiplayer_game_window(single_game.single_game_window):
                         self.select_fields = []
                         self.selected_fig = None
                 if self.game_over and self.quit_button.collidepoint(event.pos):
+                    # выход в главное меню
                     self.data = {'name': self.data['name']}
                     self.finished = True
                     self.con.disconnect()
                     self.next_stage = game_type_choice.game_type_choice_window
                 for but in self.buttons:
+                    # обработка сдачи и ничьи
                     if self.buttons[but].collidepoint(event.pos):
                         if but == 'resign':
                             if self.side == 'white':
@@ -133,12 +180,20 @@ class multiplayer_game_window(single_game.single_game_window):
                             break
 
     def subscribe_event(self):
+        """
+        обработчик события подключения к каналу партии
+        """
         print('connected')
 
     def message_event(self, message):
-        print(message.message)
+        """
+        обработчик призода сообщений
+        Args:
+        message - сообщение
+        """
         if message.message['type'] == 'move' and\
            message.message['side'] != self.side:
+            # обработка хода соперника
             self.bd.move(message.message['side'],
                          message.message['fig'],
                          message.message['field'])
@@ -162,8 +217,7 @@ class multiplayer_game_window(single_game.single_game_window):
                 else:
                     self.current_move = 'white'
         if message.message['type'] == 'result':
-            print('resigned')
-            print(message.message)
+            # обработка сдачи или поражения по времени
             self.endgame(message.message['res'])
         if message.message['type']:
             pass

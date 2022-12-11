@@ -319,6 +319,13 @@ class single_game_window:
                 self.screen.blit(fig_im, (fig_pos_x, fig_pos_y))
 
     def get_field_coords(self, field):
+        """
+        Возвращает координаты поля на экране
+        Args:
+        field - поле
+        Returns:
+        (x, y) - координаты поля
+        """
         pos = field
         coord_x = 0
         coord_y = 0
@@ -335,6 +342,11 @@ class single_game_window:
         return (coord_x, coord_y)
 
     def select_field(self, field):
+        """
+        Выделяет переданное поле
+        Args:
+        field - поле
+        """
         cell_pos = self.get_field_coords(field)
         surf = pygame.Surface((self.cell_size, self.cell_size))
         surf.set_alpha(90)
@@ -346,6 +358,11 @@ class single_game_window:
         self.screen.blit(surf, cell_pos)
 
     def parse_time(self, time):
+        """
+        Возвращает время в формате minutes:seconds
+        Args:
+        time - время в милисекундах
+        """
         time_minutes = time // (60*1000)
         time_seconds = (time % (60*1000)) // 1000
         res = ''
@@ -358,6 +375,11 @@ class single_game_window:
         return res
 
     def draw_timer(self, side):
+        """
+        Рисует таймер
+        Args:
+        side - цвет стороны, для которой рисуется таймер
+        """
         white_time_str = self.parse_time(self.white_time)
         black_time_str = self.parse_time(self.black_time)
         black_time_rendered_text = self.timer_font.\
@@ -380,6 +402,9 @@ class single_game_window:
         self.screen.blit(black_time_rendered_text, black_timer_coords)
 
     def write_res_to_db(self):
+        """
+        записывает результаты в базу данных db.txt
+        """
         with open('db.txt', 'a') as f:
             json_string = json.dumps(self.history)
             f.write(json_string + '\n')
